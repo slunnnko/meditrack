@@ -1071,7 +1071,7 @@ async function testConnection() {
   if (!token) { showToast('Zadej token'); return; }
 
   try {
-    const res = await fetch('https://api.github.com/slunnnko', {
+    const res = await fetch('https://api.github.com/user', {
       headers: { 'Authorization': `token ${token}` }
     });
     const json = await res.json();
