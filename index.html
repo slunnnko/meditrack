@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="cs">
 <head>
 <meta charset="UTF-8">
@@ -27,581 +28,583 @@
     --radius-sm: 8px;
   }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .app {
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 16px;
-    padding-bottom: 100px;
-  }
-
-  /* Header */
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 0 20px;
-  }
-
-  .header h1 {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    background: linear-gradient(135deg, var(--accent), #a78bfa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .header-actions {
-    display: flex;
-    gap: 8px;
-  }
-
-  .icon-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text-dim);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 16px;
-  }
-
-  .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* Navigation */
-  .nav {
-    display: flex;
-    background: var(--surface);
-    border-radius: var(--radius);
-    padding: 4px;
-    margin-bottom: 20px;
-    border: 1px solid var(--border);
-  }
-
-  .nav-btn {
-    flex: 1;
-    padding: 10px 8px;
-    border: none;
-    background: transparent;
-    color: var(--text-dim);
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 500;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .nav-btn.active {
-    background: var(--accent);
-    color: white;
-    box-shadow: 0 2px 12px rgba(108, 140, 255, 0.3);
-  }
-
-  /* Sections */
-  .section { display: none; }
-  .section.active { display: block; }
-
-  /* Form */
-  .form-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 12px;
-  }
-
-  .form-card-title {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--text-muted);
-    margin-bottom: 16px;
-  }
-
-  .field {
-    margin-bottom: 16px;
-  }
-
-  .field:last-child { margin-bottom: 0; }
-
-  .field label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-dim);
-    margin-bottom: 8px;
-  }
-
-  /* Scale selector */
-  .scale {
-    display: flex;
-    gap: 6px;
-  }
-
-  .scale-btn {
-    flex: 1;
-    height: 42px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-    background: var(--surface-2);
-    color: var(--text-dim);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .scale-btn:hover { border-color: var(--text-muted); }
-
-  .scale-btn.selected {
-    border-color: var(--accent);
-    background: var(--accent-glow);
-    color: var(--accent);
-    box-shadow: 0 0 12px rgba(108, 140, 255, 0.15);
-  }
-
-  .scale-btn.selected[data-value="1"] { border-color: var(--bad); color: var(--bad); background: rgba(224, 85, 85, 0.1); }
-  .scale-btn.selected[data-value="2"] { border-color: var(--warn); color: var(--warn); background: rgba(240, 160, 48, 0.1); }
-  .scale-btn.selected[data-value="3"] { border-color: var(--text-dim); color: var(--text-dim); background: rgba(136, 136, 160, 0.1); }
-  .scale-btn.selected[data-value="4"] { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
-  .scale-btn.selected[data-value="5"] { border-color: var(--good); color: var(--good); background: rgba(78, 203, 113, 0.1); }
-
-  /* Toggle */
-  .toggle-group {
-    display: flex;
-    gap: 6px;
-  }
-
-  .toggle-btn {
-    flex: 1;
-    height: 42px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-    background: var(--surface-2);
-    color: var(--text-dim);
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .toggle-btn.selected {
-    border-color: var(--accent);
-    background: var(--accent-glow);
-    color: var(--accent);
-  }
-
-  /* Input fields */
-  .input-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  input[type="number"], input[type="time"], input[type="text"], textarea {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    padding: 10px 12px;
-    width: 100%;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  input:focus, textarea:focus {
-    border-color: var(--accent);
-  }
-
-  input[type="number"] { width: 80px; text-align: center; }
-  input[type="time"] { width: 100px; }
-
-  .unit { font-size: 13px; color: var(--text-muted); }
-
-  textarea {
-    height: 60px;
-    resize: vertical;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-  }
-
-  /* Energy blocks */
-  .energy-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-  }
-
-  .energy-block label {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-bottom: 4px;
-  }
-
-  .energy-select {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .energy-option {
-    padding: 6px 8px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: var(--surface-2);
-    color: var(--text-dim);
-    font-size: 11px;
-    font-weight: 500;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.2s;
-  }
-
-  .energy-option.selected {
-    border-color: var(--accent);
-    background: var(--accent-glow);
-    color: var(--accent);
-  }
-
-  /* Submit */
-  .submit-btn {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: var(--radius);
-    background: linear-gradient(135deg, var(--accent), #8b6cf0);
-    color: white;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 16px;
-    transition: all 0.2s;
-    box-shadow: 0 4px 20px rgba(108, 140, 255, 0.25);
-  }
-
-  .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(108, 140, 255, 0.35); }
-  .submit-btn:active { transform: translateY(0); }
-  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-  /* Date display */
-  .date-display {
-    text-align: center;
-    padding: 8px;
-    font-size: 13px;
-    color: var(--text-dim);
-    font-weight: 500;
-    margin-bottom: 12px;
-  }
-
-  .date-display strong {
-    color: var(--text);
-  }
-
-  /* Toast */
-  .toast {
-    position: fixed;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--good);
-    color: #0a0a0f;
-    padding: 12px 24px;
-    border-radius: var(--radius);
-    font-size: 14px;
-    font-weight: 600;
-    opacity: 0;
-    transition: all 0.3s;
-    z-index: 100;
-    pointer-events: none;
-  }
-
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  /* History */
-  .history-item {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: border-color 0.2s;
-  }
-
-  .history-item:hover { border-color: var(--accent-dim); }
-
-  .history-date {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 6px;
-  }
-
-  .history-pills {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
-
-  .pill {
-    font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 20px;
-    font-weight: 500;
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .pill-dose { background: rgba(108, 140, 255, 0.15); color: var(--accent); }
-  .pill-good { background: rgba(78, 203, 113, 0.15); color: var(--good); }
-  .pill-mid { background: rgba(136, 136, 160, 0.15); color: var(--text-dim); }
-  .pill-bad { background: rgba(224, 85, 85, 0.15); color: var(--bad); }
-
-  /* Charts */
-  .chart-container {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    margin-bottom: 12px;
-  }
-
-  .chart-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 12px;
-  }
-
-  .chart-wrap {
-    position: relative;
-    height: 200px;
-  }
-
-  /* Dose comparison */
-  .dose-compare {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .dose-card {
-    background: var(--surface-2);
-    border-radius: var(--radius-sm);
-    padding: 12px;
-    text-align: center;
-  }
-
-  .dose-card .dose-label {
-    font-size: 11px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
-  }
-
-  .dose-card .dose-value {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--accent);
-  }
-
-  .dose-card .dose-sub {
-    font-size: 11px;
-    color: var(--text-dim);
-    margin-top: 4px;
-  }
-
-  /* Settings */
-  .settings-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 12px;
-  }
-
-  .settings-section h3 {
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 12px;
-  }
-
-  .settings-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
-  }
-
-  .settings-row label {
-    font-size: 13px;
-    color: var(--text-dim);
-    flex: 1;
-  }
-
-  .settings-row input {
-    width: 240px;
-  }
-
-  .btn-secondary {
-    padding: 10px 20px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--surface-2);
-    color: var(--text);
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
-
-  .btn-danger {
-    padding: 10px 20px;
-    border: 1px solid var(--bad);
-    border-radius: var(--radius-sm);
-    background: rgba(224, 85, 85, 0.1);
-    color: var(--bad);
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .status-bar {
-    font-size: 12px;
-    color: var(--text-muted);
-    padding: 8px 0;
-    text-align: center;
-  }
-
-  .status-bar.connected { color: var(--good); }
-  .status-bar.error { color: var(--bad); }
-
-  /* Empty state */
-  .empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--text-muted);
-  }
-
-  .empty-state .empty-icon {
-    font-size: 40px;
-    margin-bottom: 12px;
-    opacity: 0.5;
-  }
-
-  .empty-state p {
-    font-size: 14px;
-    line-height: 1.6;
-  }
-
-  /* Modal */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    display: none;
-    z-index: 200;
-    align-items: flex-end;
-    justify-content: center;
-  }
-
-  .modal-overlay.show { display: flex; }
-
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius) var(--radius) 0 0;
-    width: 100%;
-    max-width: 480px;
-    max-height: 80vh;
-    overflow-y: auto;
-    padding: 24px;
-    animation: slideUp 0.3s ease;
-  }
-
-  @keyframes slideUp {
-    from { transform: translateY(100%); }
-    to { transform: translateY(0); }
-  }
-
-  .modal h3 {
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 16px;
-  }
-
-  .modal-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 16px;
-  }
-
-  .no-data {
-    padding: 20px;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 13px;
-  }
-
-  /* Correlation matrix */
-  .corr-grid {
-    display: grid;
-    gap: 2px;
-    font-size: 10px;
-  }
-
-  .corr-cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 1;
-    border-radius: 4px;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 500;
-  }
-
-  .corr-label {
-    display: flex;
-    align-items: center;
-    font-size: 10px;
-    color: var(--text-dim);
-    padding: 2px 4px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+- { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+font-family: ‘DM Sans’, sans-serif;
+background: var(–bg);
+color: var(–text);
+min-height: 100vh;
+-webkit-tap-highlight-color: transparent;
+}
+
+.app {
+max-width: 480px;
+margin: 0 auto;
+padding: 16px;
+padding-bottom: 100px;
+}
+
+/* Header */
+.header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 12px 0 20px;
+}
+
+.header h1 {
+font-size: 20px;
+font-weight: 700;
+letter-spacing: -0.5px;
+background: linear-gradient(135deg, var(–accent), #a78bfa);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}
+
+.header-actions {
+display: flex;
+gap: 8px;
+}
+
+.icon-btn {
+width: 36px;
+height: 36px;
+border-radius: var(–radius-sm);
+border: 1px solid var(–border);
+background: var(–surface);
+color: var(–text-dim);
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+transition: all 0.2s;
+font-size: 16px;
+}
+
+.icon-btn:hover { border-color: var(–accent); color: var(–accent); }
+
+/* Navigation */
+.nav {
+display: flex;
+background: var(–surface);
+border-radius: var(–radius);
+padding: 4px;
+margin-bottom: 20px;
+border: 1px solid var(–border);
+}
+
+.nav-btn {
+flex: 1;
+padding: 10px 8px;
+border: none;
+background: transparent;
+color: var(–text-dim);
+font-family: inherit;
+font-size: 13px;
+font-weight: 500;
+border-radius: var(–radius-sm);
+cursor: pointer;
+transition: all 0.2s;
+}
+
+.nav-btn.active {
+background: var(–accent);
+color: white;
+box-shadow: 0 2px 12px rgba(108, 140, 255, 0.3);
+}
+
+/* Sections */
+.section { display: none; }
+.section.active { display: block; }
+
+/* Form */
+.form-card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 20px;
+margin-bottom: 12px;
+}
+
+.form-card-title {
+font-size: 11px;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 1.5px;
+color: var(–text-muted);
+margin-bottom: 16px;
+}
+
+.field {
+margin-bottom: 16px;
+}
+
+.field:last-child { margin-bottom: 0; }
+
+.field label {
+display: block;
+font-size: 13px;
+font-weight: 500;
+color: var(–text-dim);
+margin-bottom: 8px;
+}
+
+/* Scale selector */
+.scale {
+display: flex;
+gap: 6px;
+}
+
+.scale-btn {
+flex: 1;
+height: 42px;
+border-radius: var(–radius-sm);
+border: 1px solid var(–border);
+background: var(–surface-2);
+color: var(–text-dim);
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 14px;
+font-weight: 500;
+cursor: pointer;
+transition: all 0.2s;
+}
+
+.scale-btn:hover { border-color: var(–text-muted); }
+
+.scale-btn.selected {
+border-color: var(–accent);
+background: var(–accent-glow);
+color: var(–accent);
+box-shadow: 0 0 12px rgba(108, 140, 255, 0.15);
+}
+
+.scale-btn.selected[data-value=“1”] { border-color: var(–bad); color: var(–bad); background: rgba(224, 85, 85, 0.1); }
+.scale-btn.selected[data-value=“2”] { border-color: var(–warn); color: var(–warn); background: rgba(240, 160, 48, 0.1); }
+.scale-btn.selected[data-value=“3”] { border-color: var(–text-dim); color: var(–text-dim); background: rgba(136, 136, 160, 0.1); }
+.scale-btn.selected[data-value=“4”] { border-color: var(–accent); color: var(–accent); background: var(–accent-glow); }
+.scale-btn.selected[data-value=“5”] { border-color: var(–good); color: var(–good); background: rgba(78, 203, 113, 0.1); }
+
+/* Toggle */
+.toggle-group {
+display: flex;
+gap: 6px;
+}
+
+.toggle-btn {
+flex: 1;
+height: 42px;
+border-radius: var(–radius-sm);
+border: 1px solid var(–border);
+background: var(–surface-2);
+color: var(–text-dim);
+font-family: inherit;
+font-size: 13px;
+font-weight: 500;
+cursor: pointer;
+transition: all 0.2s;
+}
+
+.toggle-btn.selected {
+border-color: var(–accent);
+background: var(–accent-glow);
+color: var(–accent);
+}
+
+/* Input fields */
+.input-row {
+display: flex;
+gap: 8px;
+align-items: center;
+}
+
+input[type=“date”], input[type=“number”], input[type=“time”], input[type=“text”], textarea {
+background: var(–surface-2);
+border: 1px solid var(–border);
+border-radius: var(–radius-sm);
+color: var(–text);
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 14px;
+padding: 10px 12px;
+width: 100%;
+outline: none;
+transition: border-color 0.2s;
+}
+
+input:focus, textarea:focus {
+border-color: var(–accent);
+}
+
+input[type=“number”] { width: 80px; text-align: center; }
+input[type=“time”] { width: 100px; }
+input[type=“date”] { width: 160px; }
+
+.unit { font-size: 13px; color: var(–text-muted); }
+
+textarea {
+height: 60px;
+resize: vertical;
+font-family: ‘DM Sans’, sans-serif;
+font-size: 13px;
+}
+
+/* Energy blocks */
+.energy-row {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+gap: 8px;
+}
+
+.energy-block label {
+font-size: 11px;
+color: var(–text-muted);
+margin-bottom: 4px;
+}
+
+.energy-select {
+display: flex;
+flex-direction: column;
+gap: 4px;
+}
+
+.energy-option {
+padding: 6px 8px;
+border-radius: 6px;
+border: 1px solid var(–border);
+background: var(–surface-2);
+color: var(–text-dim);
+font-size: 11px;
+font-weight: 500;
+cursor: pointer;
+text-align: center;
+transition: all 0.2s;
+}
+
+.energy-option.selected {
+border-color: var(–accent);
+background: var(–accent-glow);
+color: var(–accent);
+}
+
+/* Submit */
+.submit-btn {
+width: 100%;
+padding: 14px;
+border: none;
+border-radius: var(–radius);
+background: linear-gradient(135deg, var(–accent), #8b6cf0);
+color: white;
+font-family: inherit;
+font-size: 15px;
+font-weight: 600;
+cursor: pointer;
+margin-top: 16px;
+transition: all 0.2s;
+box-shadow: 0 4px 20px rgba(108, 140, 255, 0.25);
+}
+
+.submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(108, 140, 255, 0.35); }
+.submit-btn:active { transform: translateY(0); }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* Date display */
+.date-display {
+text-align: center;
+padding: 8px;
+font-size: 13px;
+color: var(–text-dim);
+font-weight: 500;
+margin-bottom: 12px;
+}
+
+.date-display strong {
+color: var(–text);
+}
+
+/* Toast */
+.toast {
+position: fixed;
+bottom: 80px;
+left: 50%;
+transform: translateX(-50%) translateY(20px);
+background: var(–good);
+color: #0a0a0f;
+padding: 12px 24px;
+border-radius: var(–radius);
+font-size: 14px;
+font-weight: 600;
+opacity: 0;
+transition: all 0.3s;
+z-index: 100;
+pointer-events: none;
+}
+
+.toast.show {
+opacity: 1;
+transform: translateX(-50%) translateY(0);
+}
+
+/* History */
+.history-item {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 14px 16px;
+margin-bottom: 8px;
+cursor: pointer;
+transition: border-color 0.2s;
+}
+
+.history-item:hover { border-color: var(–accent-dim); }
+
+.history-date {
+font-size: 13px;
+font-weight: 600;
+color: var(–text);
+margin-bottom: 6px;
+}
+
+.history-pills {
+display: flex;
+gap: 6px;
+flex-wrap: wrap;
+}
+
+.pill {
+font-size: 11px;
+padding: 3px 8px;
+border-radius: 20px;
+font-weight: 500;
+font-family: ‘JetBrains Mono’, monospace;
+}
+
+.pill-dose { background: rgba(108, 140, 255, 0.15); color: var(–accent); }
+.pill-good { background: rgba(78, 203, 113, 0.15); color: var(–good); }
+.pill-mid { background: rgba(136, 136, 160, 0.15); color: var(–text-dim); }
+.pill-bad { background: rgba(224, 85, 85, 0.15); color: var(–bad); }
+
+/* Charts */
+.chart-container {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 16px;
+margin-bottom: 12px;
+}
+
+.chart-title {
+font-size: 13px;
+font-weight: 600;
+color: var(–text);
+margin-bottom: 12px;
+}
+
+.chart-wrap {
+position: relative;
+height: 200px;
+}
+
+/* Dose comparison */
+.dose-compare {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 8px;
+}
+
+.dose-card {
+background: var(–surface-2);
+border-radius: var(–radius-sm);
+padding: 12px;
+text-align: center;
+}
+
+.dose-card .dose-label {
+font-size: 11px;
+color: var(–text-muted);
+text-transform: uppercase;
+letter-spacing: 1px;
+margin-bottom: 8px;
+}
+
+.dose-card .dose-value {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 24px;
+font-weight: 700;
+color: var(–accent);
+}
+
+.dose-card .dose-sub {
+font-size: 11px;
+color: var(–text-dim);
+margin-top: 4px;
+}
+
+/* Settings */
+.settings-section {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 20px;
+margin-bottom: 12px;
+}
+
+.settings-section h3 {
+font-size: 14px;
+font-weight: 600;
+margin-bottom: 12px;
+}
+
+.settings-row {
+display: flex;
+align-items: center;
+gap: 12px;
+margin-bottom: 8px;
+}
+
+.settings-row label {
+font-size: 13px;
+color: var(–text-dim);
+flex: 1;
+}
+
+.settings-row input {
+width: 240px;
+}
+
+.btn-secondary {
+padding: 10px 20px;
+border: 1px solid var(–border);
+border-radius: var(–radius-sm);
+background: var(–surface-2);
+color: var(–text);
+font-family: inherit;
+font-size: 13px;
+font-weight: 500;
+cursor: pointer;
+transition: all 0.2s;
+}
+
+.btn-secondary:hover { border-color: var(–accent); color: var(–accent); }
+
+.btn-danger {
+padding: 10px 20px;
+border: 1px solid var(–bad);
+border-radius: var(–radius-sm);
+background: rgba(224, 85, 85, 0.1);
+color: var(–bad);
+font-family: inherit;
+font-size: 13px;
+font-weight: 500;
+cursor: pointer;
+transition: all 0.2s;
+}
+
+.status-bar {
+font-size: 12px;
+color: var(–text-muted);
+padding: 8px 0;
+text-align: center;
+}
+
+.status-bar.connected { color: var(–good); }
+.status-bar.error { color: var(–bad); }
+
+/* Empty state */
+.empty-state {
+text-align: center;
+padding: 40px 20px;
+color: var(–text-muted);
+}
+
+.empty-state .empty-icon {
+font-size: 40px;
+margin-bottom: 12px;
+opacity: 0.5;
+}
+
+.empty-state p {
+font-size: 14px;
+line-height: 1.6;
+}
+
+/* Modal */
+.modal-overlay {
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.7);
+display: none;
+z-index: 200;
+align-items: flex-end;
+justify-content: center;
+}
+
+.modal-overlay.show { display: flex; }
+
+.modal {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: var(–radius) var(–radius) 0 0;
+width: 100%;
+max-width: 480px;
+max-height: 80vh;
+overflow-y: auto;
+padding: 24px;
+animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+from { transform: translateY(100%); }
+to { transform: translateY(0); }
+}
+
+.modal h3 {
+font-size: 16px;
+font-weight: 600;
+margin-bottom: 16px;
+}
+
+.modal-actions {
+display: flex;
+gap: 8px;
+margin-top: 16px;
+}
+
+.no-data {
+padding: 20px;
+text-align: center;
+color: var(–text-muted);
+font-size: 13px;
+}
+
+/* Correlation matrix */
+.corr-grid {
+display: grid;
+gap: 2px;
+font-size: 10px;
+}
+
+.corr-cell {
+display: flex;
+align-items: center;
+justify-content: center;
+aspect-ratio: 1;
+border-radius: 4px;
+font-family: ‘JetBrains Mono’, monospace;
+font-weight: 500;
+}
+
+.corr-label {
+display: flex;
+align-items: center;
+font-size: 10px;
+color: var(–text-dim);
+padding: 2px 4px;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+}
 </style>
+
 </head>
 <body>
 
@@ -623,183 +626,200 @@
   </nav>
 
   <!-- LOG SECTION -->
+
   <div id="section-log" class="section active">
     <div class="date-display">
-      <strong id="todayDate"></strong>
+      <input type="date" id="entryDate" onchange="onDateChange()">
       <span id="entryExists" style="display:none; color: var(--warn);"> — záznam existuje</span>
     </div>
 
-    <div class="form-card">
-      <div class="form-card-title">Dávka</div>
-      <div class="field">
-        <label>Dávka (mg)</label>
-        <div class="input-row">
-          <input type="number" id="dose" value="18" step="18" min="0" max="108">
-          <span class="unit">mg</span>
-          <span style="margin-left: 8px;">v</span>
-          <input type="time" id="doseTime" value="07:00">
-        </div>
+```
+<div class="form-card">
+  <div class="form-card-title">Dávka</div>
+  <div class="field">
+    <label>Dávka (mg)</label>
+    <div class="input-row">
+      <input type="number" id="dose" value="18" step="18" min="0" max="108">
+      <span class="unit">mg</span>
+      <span style="margin-left: 8px;">v</span>
+      <input type="time" id="doseTime" value="07:00">
+    </div>
+  </div>
+</div>
+
+<div class="form-card">
+  <div class="form-card-title">Metriky (1–5)</div>
+  <div class="field">
+    <label>Iniciace — jak těžké bylo začít s nudným úkolem</label>
+    <div class="scale" data-field="initiation">
+      <button class="scale-btn" data-value="1">1</button>
+      <button class="scale-btn" data-value="2">2</button>
+      <button class="scale-btn" data-value="3">3</button>
+      <button class="scale-btn" data-value="4">4</button>
+      <button class="scale-btn" data-value="5">5</button>
+    </div>
+  </div>
+  <div class="field">
+    <label>Focus — udržení pozornosti</label>
+    <div class="scale" data-field="focus">
+      <button class="scale-btn" data-value="1">1</button>
+      <button class="scale-btn" data-value="2">2</button>
+      <button class="scale-btn" data-value="3">3</button>
+      <button class="scale-btn" data-value="4">4</button>
+      <button class="scale-btn" data-value="5">5</button>
+    </div>
+  </div>
+  <div class="field">
+    <label>Emoční reaktivita — klid vs. výbuch</label>
+    <div class="scale" data-field="emotionalReactivity">
+      <button class="scale-btn" data-value="1">1</button>
+      <button class="scale-btn" data-value="2">2</button>
+      <button class="scale-btn" data-value="3">3</button>
+      <button class="scale-btn" data-value="4">4</button>
+      <button class="scale-btn" data-value="5">5</button>
+    </div>
+  </div>
+</div>
+
+<div class="form-card">
+  <div class="form-card-title">Tělo</div>
+  <div class="field">
+    <label>Hlad zaregistrován?</label>
+    <div class="toggle-group" data-field="hungerNoticed">
+      <button class="toggle-btn" data-value="yes">Ano</button>
+      <button class="toggle-btn" data-value="no">Ne</button>
+    </div>
+  </div>
+  <div class="field">
+    <label>První jídlo</label>
+    <input type="time" id="firstMeal" value="11:00" style="width: 120px;">
+  </div>
+  <div class="field">
+    <label>Průměrná tepová frekvence</label>
+    <div class="input-row">
+      <input type="number" id="heartRate" min="40" max="200" placeholder="—">
+      <span class="unit">bpm</span>
+    </div>
+  </div>
+  <div class="field">
+    <label>Tinnitus — změna?</label>
+    <div class="toggle-group" data-field="tinnitus">
+      <button class="toggle-btn" data-value="better">Lepší</button>
+      <button class="toggle-btn" data-value="same">Stejný</button>
+      <button class="toggle-btn" data-value="worse">Horší</button>
+    </div>
+  </div>
+  <div class="field">
+    <label>RLS — změna?</label>
+    <div class="toggle-group" data-field="rls">
+      <button class="toggle-btn" data-value="better">Lepší</button>
+      <button class="toggle-btn" data-value="same">Stejný</button>
+      <button class="toggle-btn" data-value="worse">Horší</button>
+    </div>
+  </div>
+</div>
+
+<div class="form-card">
+  <div class="form-card-title">Energie přes den</div>
+  <div class="energy-row">
+    <div class="energy-block">
+      <label>Ráno</label>
+      <div class="energy-select" data-field="energyMorning">
+        <button class="energy-option" data-value="low">Low</button>
+        <button class="energy-option" data-value="ok">OK</button>
+        <button class="energy-option" data-value="good">Good</button>
       </div>
     </div>
-
-    <div class="form-card">
-      <div class="form-card-title">Metriky (1–5)</div>
-      <div class="field">
-        <label>Iniciace — jak těžké bylo začít s nudným úkolem</label>
-        <div class="scale" data-field="initiation">
-          <button class="scale-btn" data-value="1">1</button>
-          <button class="scale-btn" data-value="2">2</button>
-          <button class="scale-btn" data-value="3">3</button>
-          <button class="scale-btn" data-value="4">4</button>
-          <button class="scale-btn" data-value="5">5</button>
-        </div>
-      </div>
-      <div class="field">
-        <label>Focus — udržení pozornosti</label>
-        <div class="scale" data-field="focus">
-          <button class="scale-btn" data-value="1">1</button>
-          <button class="scale-btn" data-value="2">2</button>
-          <button class="scale-btn" data-value="3">3</button>
-          <button class="scale-btn" data-value="4">4</button>
-          <button class="scale-btn" data-value="5">5</button>
-        </div>
-      </div>
-      <div class="field">
-        <label>Emoční reaktivita — klid vs. výbuch</label>
-        <div class="scale" data-field="emotionalReactivity">
-          <button class="scale-btn" data-value="1">1</button>
-          <button class="scale-btn" data-value="2">2</button>
-          <button class="scale-btn" data-value="3">3</button>
-          <button class="scale-btn" data-value="4">4</button>
-          <button class="scale-btn" data-value="5">5</button>
-        </div>
+    <div class="energy-block">
+      <label>Odpoledne</label>
+      <div class="energy-select" data-field="energyAfternoon">
+        <button class="energy-option" data-value="low">Low</button>
+        <button class="energy-option" data-value="ok">OK</button>
+        <button class="energy-option" data-value="good">Good</button>
+        <button class="energy-option" data-value="crash">Crash</button>
       </div>
     </div>
-
-    <div class="form-card">
-      <div class="form-card-title">Tělo</div>
-      <div class="field">
-        <label>Hlad zaregistrován?</label>
-        <div class="toggle-group" data-field="hungerNoticed">
-          <button class="toggle-btn" data-value="yes">Ano</button>
-          <button class="toggle-btn" data-value="no">Ne</button>
-        </div>
-      </div>
-      <div class="field">
-        <label>První jídlo</label>
-        <input type="time" id="firstMeal" value="11:00" style="width: 120px;">
-      </div>
-      <div class="field">
-        <label>Tinnitus — změna?</label>
-        <div class="toggle-group" data-field="tinnitus">
-          <button class="toggle-btn" data-value="better">Lepší</button>
-          <button class="toggle-btn" data-value="same">Stejný</button>
-          <button class="toggle-btn" data-value="worse">Horší</button>
-        </div>
-      </div>
-      <div class="field">
-        <label>RLS — změna?</label>
-        <div class="toggle-group" data-field="rls">
-          <button class="toggle-btn" data-value="better">Lepší</button>
-          <button class="toggle-btn" data-value="same">Stejný</button>
-          <button class="toggle-btn" data-value="worse">Horší</button>
-        </div>
+    <div class="energy-block">
+      <label>Večer</label>
+      <div class="energy-select" data-field="energyEvening">
+        <button class="energy-option" data-value="low">Low</button>
+        <button class="energy-option" data-value="ok">OK</button>
+        <button class="energy-option" data-value="good">Good</button>
+        <button class="energy-option" data-value="crash">Crash</button>
       </div>
     </div>
+  </div>
+</div>
 
-    <div class="form-card">
-      <div class="form-card-title">Energie přes den</div>
-      <div class="energy-row">
-        <div class="energy-block">
-          <label>Ráno</label>
-          <div class="energy-select" data-field="energyMorning">
-            <button class="energy-option" data-value="low">Low</button>
-            <button class="energy-option" data-value="ok">OK</button>
-            <button class="energy-option" data-value="good">Good</button>
-          </div>
-        </div>
-        <div class="energy-block">
-          <label>Odpoledne</label>
-          <div class="energy-select" data-field="energyAfternoon">
-            <button class="energy-option" data-value="low">Low</button>
-            <button class="energy-option" data-value="ok">OK</button>
-            <button class="energy-option" data-value="good">Good</button>
-            <button class="energy-option" data-value="crash">Crash</button>
-          </div>
-        </div>
-        <div class="energy-block">
-          <label>Večer</label>
-          <div class="energy-select" data-field="energyEvening">
-            <button class="energy-option" data-value="low">Low</button>
-            <button class="energy-option" data-value="ok">OK</button>
-            <button class="energy-option" data-value="good">Good</button>
-            <button class="energy-option" data-value="crash">Crash</button>
-          </div>
-        </div>
-      </div>
+<div class="form-card">
+  <div class="form-card-title">Spánek (minulá noc)</div>
+  <div class="field">
+    <label>Usínání</label>
+    <div class="toggle-group" data-field="sleepOnset">
+      <button class="toggle-btn" data-value="easy">Lehké</button>
+      <button class="toggle-btn" data-value="normal">Normální</button>
+      <button class="toggle-btn" data-value="hard">Těžké</button>
     </div>
-
-    <div class="form-card">
-      <div class="form-card-title">Spánek (minulá noc)</div>
-      <div class="field">
-        <label>Usínání</label>
-        <div class="toggle-group" data-field="sleepOnset">
-          <button class="toggle-btn" data-value="easy">Lehké</button>
-          <button class="toggle-btn" data-value="normal">Normální</button>
-          <button class="toggle-btn" data-value="hard">Těžké</button>
-        </div>
-      </div>
-      <div class="field">
-        <label>Probouzení v noci</label>
-        <div class="toggle-group" data-field="nightWaking">
-          <button class="toggle-btn" data-value="none">Ne</button>
-          <button class="toggle-btn" data-value="once">1×</button>
-          <button class="toggle-btn" data-value="multiple">Víckrát</button>
-        </div>
-      </div>
+  </div>
+  <div class="field">
+    <label>Probouzení v noci</label>
+    <div class="toggle-group" data-field="nightWaking">
+      <button class="toggle-btn" data-value="none">Ne</button>
+      <button class="toggle-btn" data-value="once">1×</button>
+      <button class="toggle-btn" data-value="multiple">Víckrát</button>
     </div>
+  </div>
+</div>
 
-    <div class="form-card">
-      <div class="form-card-title">Poznámka</div>
-      <div class="field">
-        <textarea id="note" placeholder="Cokoliv neobvyklého — jedna věta max"></textarea>
-      </div>
-    </div>
+<div class="form-card">
+  <div class="form-card-title">Poznámka</div>
+  <div class="field">
+    <textarea id="note" placeholder="Cokoliv neobvyklého — jedna věta max"></textarea>
+  </div>
+</div>
 
-    <button class="submit-btn" onclick="saveEntry()">Uložit záznam</button>
+<button class="submit-btn" onclick="saveEntry()">Uložit záznam</button>
+```
+
   </div>
 
   <!-- HISTORY SECTION -->
+
   <div id="section-history" class="section">
     <div id="historyList"></div>
   </div>
 
   <!-- CHARTS SECTION -->
+
   <div id="section-charts" class="section">
     <div class="chart-container">
       <div class="chart-title">Trendy metrik (7 dní)</div>
       <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
     </div>
 
-    <div class="chart-container">
-      <div class="chart-title">Energie přes den</div>
-      <div class="chart-wrap"><canvas id="energyChart"></canvas></div>
-    </div>
+```
+<div class="chart-container">
+  <div class="chart-title">Energie přes den</div>
+  <div class="chart-wrap"><canvas id="energyChart"></canvas></div>
+</div>
 
-    <div class="chart-container">
-      <div class="chart-title">Porovnání dávek</div>
-      <div id="doseComparison" class="dose-compare"></div>
-      <div style="height:12px"></div>
-      <div class="chart-wrap"><canvas id="doseChart"></canvas></div>
-    </div>
+<div class="chart-container">
+  <div class="chart-title">Porovnání dávek</div>
+  <div id="doseComparison" class="dose-compare"></div>
+  <div style="height:12px"></div>
+  <div class="chart-wrap"><canvas id="doseChart"></canvas></div>
+</div>
 
-    <div class="chart-container">
-      <div class="chart-title">Korelace metrik</div>
-      <div id="corrMatrix"></div>
-    </div>
+<div class="chart-container">
+  <div class="chart-title">Korelace metrik</div>
+  <div id="corrMatrix"></div>
+</div>
+```
+
   </div>
 
   <!-- SETTINGS SECTION -->
+
   <div id="section-settings" class="section">
     <div class="settings-section">
       <h3>GitHub Gist</h3>
@@ -817,18 +837,22 @@
       </div>
     </div>
 
-    <div class="settings-section">
-      <h3>Data</h3>
-      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-        <button class="btn-secondary" onclick="exportJSON()">Export JSON</button>
-        <button class="btn-secondary" onclick="importJSON()">Import JSON</button>
-        <button class="btn-danger" onclick="clearData()">Smazat vše</button>
-      </div>
-    </div>
+```
+<div class="settings-section">
+  <h3>Data</h3>
+  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+    <button class="btn-secondary" onclick="exportJSON()">Export JSON</button>
+    <button class="btn-secondary" onclick="importJSON()">Import JSON</button>
+    <button class="btn-danger" onclick="clearData()">Smazat vše</button>
+  </div>
+</div>
+```
+
   </div>
 </div>
 
 <!-- Detail modal -->
+
 <div id="detailModal" class="modal-overlay" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <h3 id="modalTitle"></h3>
@@ -863,8 +887,7 @@ function init() {
 
   // Set today's date
   const today = new Date();
-  const opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-  document.getElementById('todayDate').textContent = today.toLocaleDateString('cs-CZ', opts);
+  document.getElementById('entryDate').value = getDateKey(today);
 
   // Check if entry exists for today
   checkTodayEntry();
@@ -941,14 +964,64 @@ function getDateKey(d) {
 }
 
 function checkTodayEntry() {
-  const today = getDateKey(new Date());
-  const exists = entries.find(e => e.date === today);
+  const selectedDate = document.getElementById('entryDate').value;
+  const exists = entries.find(e => e.date === selectedDate);
   document.getElementById('entryExists').style.display = exists ? 'inline' : 'none';
+}
+
+function onDateChange() {
+  checkTodayEntry();
+  loadEntryForDate(document.getElementById('entryDate').value);
+}
+
+function loadEntryForDate(date) {
+  const e = entries.find(x => x.date === date);
+
+  // Reset all selections
+  document.querySelectorAll('.scale-btn, .toggle-btn, .energy-option').forEach(b => b.classList.remove('selected'));
+  document.getElementById('dose').value = 18;
+  document.getElementById('doseTime').value = '07:00';
+  document.getElementById('firstMeal').value = '11:00';
+  document.getElementById('heartRate').value = '';
+  document.getElementById('note').value = '';
+
+  if (!e) return;
+
+  // Populate form
+  document.getElementById('dose').value = e.dose || 18;
+  document.getElementById('doseTime').value = e.doseTime || '07:00';
+  document.getElementById('firstMeal').value = e.firstMeal || '11:00';
+  document.getElementById('heartRate').value = e.heartRate || '';
+  document.getElementById('note').value = e.note || '';
+
+  // Set scale buttons
+  ['initiation', 'focus', 'emotionalReactivity'].forEach(field => {
+    if (e[field]) {
+      const btn = document.querySelector(`[data-field="${field}"] .scale-btn[data-value="${e[field]}"]`);
+      if (btn) btn.classList.add('selected');
+    }
+  });
+
+  // Set toggle buttons
+  ['hungerNoticed', 'tinnitus', 'rls', 'sleepOnset', 'nightWaking'].forEach(field => {
+    if (e[field]) {
+      const btn = document.querySelector(`[data-field="${field}"] [data-value="${e[field]}"]`);
+      if (btn) btn.classList.add('selected');
+    }
+  });
+
+  // Set energy buttons
+  ['energyMorning', 'energyAfternoon', 'energyEvening'].forEach(field => {
+    if (e[field]) {
+      const btn = document.querySelector(`[data-field="${field}"] [data-value="${e[field]}"]`);
+      if (btn) btn.classList.add('selected');
+    }
+  });
 }
 
 function saveEntry() {
   const entry = {
-    date: getDateKey(new Date()),
+    date: document.getElementById('entryDate').value,
     timestamp: new Date().toISOString(),
     dose: parseInt(document.getElementById('dose').value) || 0,
     doseTime: document.getElementById('doseTime').value,
@@ -957,6 +1030,7 @@ function saveEntry() {
     emotionalReactivity: parseInt(getFormValue('emotionalReactivity')) || null,
     hungerNoticed: getFormValue('hungerNoticed'),
     firstMeal: document.getElementById('firstMeal').value,
+    heartRate: parseInt(document.getElementById('heartRate').value) || null,
     tinnitus: getFormValue('tinnitus'),
     rls: getFormValue('rls'),
     energyMorning: getFormValue('energyMorning'),
@@ -1121,6 +1195,7 @@ function renderHistory() {
     if (e.initiation) pills.push(`<span class="pill ${pillClass(e.initiation)}">Init ${e.initiation}</span>`);
     if (e.focus) pills.push(`<span class="pill ${pillClass(e.focus)}">Focus ${e.focus}</span>`);
     if (e.emotionalReactivity) pills.push(`<span class="pill ${pillClass(e.emotionalReactivity)}">Emo ${e.emotionalReactivity}</span>`);
+    if (e.heartRate) pills.push(`<span class="pill pill-dose">${e.heartRate}bpm</span>`);
     return `<div class="history-item" onclick="showDetail('${e.date}')">
       <div class="history-date">${dateStr}</div>
       <div class="history-pills">${pills.join('')}</div>
@@ -1154,6 +1229,7 @@ function showDetail(date) {
   html += row('Emoční reaktivita', scaleBar(e.emotionalReactivity));
   html += row('Hlad', e.hungerNoticed === 'yes' ? 'Ano' : 'Ne');
   html += row('První jídlo', e.firstMeal || '—');
+  html += row('Tepová frekvence', e.heartRate ? `${e.heartRate} bpm` : '—');
   html += row('Tinnitus', changeLabels[e.tinnitus] || '—');
   html += row('RLS', changeLabels[e.rls] || '—');
   html += row('Energie', `${energyLabels[e.energyMorning]||'—'} → ${energyLabels[e.energyAfternoon]||'—'} → ${energyLabels[e.energyEvening]||'—'}`);
@@ -1231,6 +1307,29 @@ function renderTrendChart() {
     },
     options: chartOptions(1, 5)
   });
+
+  // Heart rate separate chart (different scale)
+  if (recent.some(e => e.heartRate)) {
+    let hrCanvas = document.getElementById('hrTrendChart');
+    if (!hrCanvas) {
+      const container = document.createElement('div');
+      container.className = 'chart-container';
+      container.innerHTML = '<div class="chart-title">Tepová frekvence</div><div class="chart-wrap"><canvas id="hrTrendChart"></canvas></div>';
+      document.getElementById('trendChart').closest('.chart-container').after(container);
+      hrCanvas = document.getElementById('hrTrendChart');
+    }
+    if (charts.hrTrend) charts.hrTrend.destroy();
+    charts.hrTrend = new Chart(hrCanvas, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Tepová frekvence', data: recent.map(e => e.heartRate), borderColor: '#e05555', backgroundColor: 'rgba(224,85,85,0.1)', tension: 0.3, fill: true, pointRadius: 4 }
+        ]
+      },
+      options: chartOptions(50, 120)
+    });
+  }
 }
 
 function renderEnergyChart() {
@@ -1324,8 +1423,8 @@ function renderDoseComparison() {
 
 function renderCorrelation() {
   const container = document.getElementById('corrMatrix');
-  const metrics = ['initiation', 'focus', 'emotionalReactivity', 'dose'];
-  const labels = ['Init', 'Focus', 'Emo', 'Dávka'];
+  const metrics = ['initiation', 'focus', 'emotionalReactivity', 'dose', 'heartRate'];
+  const labels = ['Init', 'Focus', 'Emo', 'Dávka', 'Tep'];
 
   const data = metrics.map(m => entries.map(e => e[m]).filter(v => v != null));
 
