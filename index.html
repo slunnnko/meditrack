@@ -9,43 +9,31 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #12121a;
-    --surface-2: #1a1a25;
-    --surface-3: #22222f;
-    --border: #2a2a3a;
-    --text: #e8e8ef;
-    --text-dim: #8888a0;
-    --text-muted: #555568;
-    --accent: #6c8cff;
-    --accent-dim: #4a6ad4;
-    --accent-glow: rgba(108, 140, 255, 0.15);
-    --good: #4ecb71;
-    --warn: #f0a030;
-    --bad: #e05555;
-    --radius: 12px;
-    --radius-sm: 8px;
-  }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-- { margin: 0; padding: 0; box-sizing: border-box; }
+html {
+background-color: #0a0a0f;
+color-scheme: dark;
+}
 
 body {
 font-family: ‘DM Sans’, sans-serif;
-background: var(–bg);
-color: var(–text);
+background-color: #0a0a0f;
+color: #e8e8ef;
 min-height: 100vh;
+min-height: 100dvh;
 -webkit-tap-highlight-color: transparent;
+-webkit-text-size-adjust: 100%;
 }
 
 .app {
 max-width: 480px;
 margin: 0 auto;
 padding: 16px;
-padding-bottom: 100px;
+padding-bottom: 120px;
 }
 
-/* Header */
+/* ── Header ── */
 .header {
 display: flex;
 align-items: center;
@@ -57,551 +45,336 @@ padding: 12px 0 20px;
 font-size: 20px;
 font-weight: 700;
 letter-spacing: -0.5px;
-background: linear-gradient(135deg, var(–accent), #a78bfa);
+background: linear-gradient(135deg, #6c8cff, #a78bfa);
 -webkit-background-clip: text;
+background-clip: text;
 -webkit-text-fill-color: transparent;
 }
 
-.header-actions {
-display: flex;
-gap: 8px;
-}
+.header-actions { display: flex; gap: 8px; }
 
 .icon-btn {
-width: 36px;
-height: 36px;
-border-radius: var(–radius-sm);
-border: 1px solid var(–border);
-background: var(–surface);
-color: var(–text-dim);
-display: flex;
-align-items: center;
-justify-content: center;
-cursor: pointer;
-transition: all 0.2s;
-font-size: 16px;
+width: 36px; height: 36px;
+border-radius: 8px;
+border: 1px solid #2a2a3a;
+background-color: #12121a;
+color: #8888a0;
+display: flex; align-items: center; justify-content: center;
+cursor: pointer; transition: all 0.2s; font-size: 16px;
 }
+.icon-btn:active { border-color: #6c8cff; color: #6c8cff; }
 
-.icon-btn:hover { border-color: var(–accent); color: var(–accent); }
-
-/* Navigation */
+/* ── Nav ── */
 .nav {
 display: flex;
-background: var(–surface);
-border-radius: var(–radius);
+background-color: #12121a;
+border-radius: 12px;
 padding: 4px;
 margin-bottom: 20px;
-border: 1px solid var(–border);
+border: 1px solid #2a2a3a;
 }
 
 .nav-btn {
-flex: 1;
-padding: 10px 8px;
-border: none;
-background: transparent;
-color: var(–text-dim);
-font-family: inherit;
-font-size: 13px;
-font-weight: 500;
-border-radius: var(–radius-sm);
-cursor: pointer;
+flex: 1; padding: 10px 8px;
+border: none; background-color: transparent;
+color: #8888a0; font-family: inherit;
+font-size: 13px; font-weight: 500;
+border-radius: 8px; cursor: pointer;
 transition: all 0.2s;
 }
 
 .nav-btn.active {
-background: var(–accent);
-color: white;
-box-shadow: 0 2px 12px rgba(108, 140, 255, 0.3);
+background-color: #6c8cff; color: #fff;
+box-shadow: 0 2px 12px rgba(108,140,255,0.3);
 }
 
-/* Sections */
+/* ── Sections ── */
 .section { display: none; }
 .section.active { display: block; }
 
-/* Form */
+/* ── Form cards ── */
 .form-card {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: var(–radius);
+background-color: #12121a;
+border: 1px solid #2a2a3a;
+border-radius: 12px;
 padding: 20px;
 margin-bottom: 12px;
 }
 
 .form-card-title {
-font-size: 11px;
-font-weight: 600;
-text-transform: uppercase;
-letter-spacing: 1.5px;
-color: var(–text-muted);
-margin-bottom: 16px;
+font-size: 11px; font-weight: 600;
+text-transform: uppercase; letter-spacing: 1.5px;
+color: #555568; margin-bottom: 16px;
 }
 
-.field {
-margin-bottom: 16px;
-}
-
+.field { margin-bottom: 16px; }
 .field:last-child { margin-bottom: 0; }
 
-.field label {
-display: block;
-font-size: 13px;
-font-weight: 500;
-color: var(–text-dim);
-margin-bottom: 8px;
+.field > label {
+display: block; font-size: 13px; font-weight: 500;
+color: #8888a0; margin-bottom: 8px;
 }
 
-/* Scale selector */
-.scale {
-display: flex;
-gap: 6px;
-}
+/* ── Scale buttons (1-5) ── */
+.scale { display: flex; gap: 6px; }
 
 .scale-btn {
-flex: 1;
-height: 42px;
-border-radius: var(–radius-sm);
-border: 1px solid var(–border);
-background: var(–surface-2);
-color: var(–text-dim);
+flex: 1; height: 42px;
+border-radius: 8px;
+border: 1px solid #2a2a3a;
+background-color: #1a1a25;
+color: #8888a0;
 font-family: ‘JetBrains Mono’, monospace;
-font-size: 14px;
-font-weight: 500;
-cursor: pointer;
-transition: all 0.2s;
+font-size: 14px; font-weight: 500;
+cursor: pointer; transition: all 0.15s;
+-webkit-appearance: none;
+appearance: none;
 }
+.scale-btn.s1 { border-color: #e05555 !important; color: #e05555 !important; background-color: rgba(224,85,85,0.12) !important; }
+.scale-btn.s2 { border-color: #f0a030 !important; color: #f0a030 !important; background-color: rgba(240,160,48,0.12) !important; }
+.scale-btn.s3 { border-color: #8888a0 !important; color: #8888a0 !important; background-color: rgba(136,136,160,0.12) !important; }
+.scale-btn.s4 { border-color: #6c8cff !important; color: #6c8cff !important; background-color: rgba(108,140,255,0.12) !important; }
+.scale-btn.s5 { border-color: #4ecb71 !important; color: #4ecb71 !important; background-color: rgba(78,203,113,0.12) !important; }
 
-.scale-btn:hover { border-color: var(–text-muted); }
-
-.scale-btn.selected {
-border-color: var(–accent);
-background: var(–accent-glow);
-color: var(–accent);
-box-shadow: 0 0 12px rgba(108, 140, 255, 0.15);
-}
-
-.scale-btn.selected[data-value=“1”] { border-color: var(–bad); color: var(–bad); background: rgba(224, 85, 85, 0.1); }
-.scale-btn.selected[data-value=“2”] { border-color: var(–warn); color: var(–warn); background: rgba(240, 160, 48, 0.1); }
-.scale-btn.selected[data-value=“3”] { border-color: var(–text-dim); color: var(–text-dim); background: rgba(136, 136, 160, 0.1); }
-.scale-btn.selected[data-value=“4”] { border-color: var(–accent); color: var(–accent); background: var(–accent-glow); }
-.scale-btn.selected[data-value=“5”] { border-color: var(–good); color: var(–good); background: rgba(78, 203, 113, 0.1); }
-
-/* Toggle */
-.toggle-group {
-display: flex;
-gap: 6px;
-}
+/* ── Toggle buttons ── */
+.toggle-group { display: flex; gap: 6px; }
 
 .toggle-btn {
-flex: 1;
-height: 42px;
-border-radius: var(–radius-sm);
-border: 1px solid var(–border);
-background: var(–surface-2);
-color: var(–text-dim);
-font-family: inherit;
-font-size: 13px;
-font-weight: 500;
-cursor: pointer;
-transition: all 0.2s;
+flex: 1; height: 42px;
+border-radius: 8px;
+border: 1px solid #2a2a3a;
+background-color: #1a1a25;
+color: #8888a0;
+font-family: inherit; font-size: 13px; font-weight: 500;
+cursor: pointer; transition: all 0.15s;
+-webkit-appearance: none;
+appearance: none;
+}
+.toggle-btn.sel {
+border-color: #6c8cff !important;
+background-color: rgba(108,140,255,0.15) !important;
+color: #6c8cff !important;
 }
 
-.toggle-btn.selected {
-border-color: var(–accent);
-background: var(–accent-glow);
-color: var(–accent);
-}
+/* ── Inputs ── */
+.input-row { display: flex; gap: 8px; align-items: center; }
 
-/* Input fields */
-.input-row {
-display: flex;
-gap: 8px;
-align-items: center;
-}
-
-input[type=“date”], input[type=“number”], input[type=“time”], input[type=“text”], textarea {
-background: var(–surface-2);
-border: 1px solid var(–border);
-border-radius: var(–radius-sm);
-color: var(–text);
+input[type=“date”],
+input[type=“number”],
+input[type=“time”],
+input[type=“text”],
+input[type=“password”],
+textarea {
+background-color: #1a1a25;
+border: 1px solid #2a2a3a;
+border-radius: 8px;
+color: #e8e8ef;
 font-family: ‘JetBrains Mono’, monospace;
 font-size: 14px;
 padding: 10px 12px;
 width: 100%;
 outline: none;
 transition: border-color 0.2s;
+-webkit-appearance: none;
+appearance: none;
+color-scheme: dark;
 }
-
-input:focus, textarea:focus {
-border-color: var(–accent);
-}
-
+input:focus, textarea:focus { border-color: #6c8cff; }
 input[type=“number”] { width: 80px; text-align: center; }
-input[type=“time”] { width: 100px; }
+input[type=“time”] { width: 110px; }
 input[type=“date”] { width: 160px; }
 
-.unit { font-size: 13px; color: var(–text-muted); }
+.unit { font-size: 13px; color: #555568; white-space: nowrap; }
 
 textarea {
-height: 60px;
-resize: vertical;
+height: 60px; resize: vertical;
 font-family: ‘DM Sans’, sans-serif;
 font-size: 13px;
 }
 
-/* Energy blocks */
-.energy-row {
-display: grid;
-grid-template-columns: 1fr 1fr 1fr;
-gap: 8px;
-}
-
-.energy-block label {
-font-size: 11px;
-color: var(–text-muted);
-margin-bottom: 4px;
-}
-
-.energy-select {
-display: flex;
-flex-direction: column;
-gap: 4px;
-}
+/* ── Energy blocks ── */
+.energy-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.energy-block > label { font-size: 11px; color: #555568; margin-bottom: 4px; display: block; }
+.energy-select { display: flex; flex-direction: column; gap: 4px; }
 
 .energy-option {
-padding: 6px 8px;
-border-radius: 6px;
-border: 1px solid var(–border);
-background: var(–surface-2);
-color: var(–text-dim);
-font-size: 11px;
-font-weight: 500;
-cursor: pointer;
-text-align: center;
-transition: all 0.2s;
+padding: 6px 8px; border-radius: 6px;
+border: 1px solid #2a2a3a;
+background-color: #1a1a25;
+color: #8888a0;
+font-size: 11px; font-weight: 500;
+cursor: pointer; text-align: center;
+transition: all 0.15s;
+-webkit-appearance: none;
+appearance: none;
+}
+.energy-option.sel {
+border-color: #6c8cff !important;
+background-color: rgba(108,140,255,0.15) !important;
+color: #6c8cff !important;
 }
 
-.energy-option.selected {
-border-color: var(–accent);
-background: var(–accent-glow);
-color: var(–accent);
-}
-
-/* Submit */
+/* ── Submit ── */
 .submit-btn {
-width: 100%;
-padding: 14px;
-border: none;
-border-radius: var(–radius);
-background: linear-gradient(135deg, var(–accent), #8b6cf0);
-color: white;
-font-family: inherit;
-font-size: 15px;
-font-weight: 600;
-cursor: pointer;
-margin-top: 16px;
+width: 100%; padding: 14px;
+border: none; border-radius: 12px;
+background: linear-gradient(135deg, #6c8cff, #8b6cf0);
+color: #fff; font-family: inherit;
+font-size: 15px; font-weight: 600;
+cursor: pointer; margin-top: 16px;
 transition: all 0.2s;
-box-shadow: 0 4px 20px rgba(108, 140, 255, 0.25);
+box-shadow: 0 4px 20px rgba(108,140,255,0.25);
+-webkit-appearance: none;
 }
+.submit-btn:active { transform: scale(0.98); }
 
-.submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(108, 140, 255, 0.35); }
-.submit-btn:active { transform: translateY(0); }
-.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-/* Date display */
-.date-display {
-text-align: center;
-padding: 8px;
-font-size: 13px;
-color: var(–text-dim);
-font-weight: 500;
-margin-bottom: 12px;
+/* ── Date display ── */
+.date-bar {
+display: flex; align-items: center; justify-content: center;
+gap: 8px; padding: 8px; margin-bottom: 12px;
 }
+.date-bar .warn { font-size: 12px; color: #f0a030; }
 
-.date-display strong {
-color: var(–text);
-}
-
-/* Toast */
+/* ── Toast ── */
 .toast {
-position: fixed;
-bottom: 80px;
-left: 50%;
+position: fixed; bottom: 80px; left: 50%;
 transform: translateX(-50%) translateY(20px);
-background: var(–good);
-color: #0a0a0f;
-padding: 12px 24px;
-border-radius: var(–radius);
-font-size: 14px;
-font-weight: 600;
-opacity: 0;
-transition: all 0.3s;
-z-index: 100;
-pointer-events: none;
+background-color: #4ecb71; color: #0a0a0f;
+padding: 12px 24px; border-radius: 12px;
+font-size: 14px; font-weight: 600;
+opacity: 0; transition: all 0.3s;
+z-index: 100; pointer-events: none;
 }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-.toast.show {
-opacity: 1;
-transform: translateX(-50%) translateY(0);
-}
-
-/* History */
+/* ── History ── */
 .history-item {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: var(–radius);
+background-color: #12121a;
+border: 1px solid #2a2a3a;
+border-radius: 12px;
 padding: 14px 16px;
 margin-bottom: 8px;
-cursor: pointer;
-transition: border-color 0.2s;
 }
 
-.history-item:hover { border-color: var(–accent-dim); }
-
-.history-date {
-font-size: 13px;
-font-weight: 600;
-color: var(–text);
+.history-top {
+display: flex; justify-content: space-between; align-items: center;
 margin-bottom: 6px;
 }
 
-.history-pills {
-display: flex;
-gap: 6px;
-flex-wrap: wrap;
+.history-date { font-size: 13px; font-weight: 600; color: #e8e8ef; }
+
+.history-edit {
+font-size: 11px; color: #6c8cff;
+background: none; border: 1px solid #6c8cff;
+border-radius: 6px; padding: 3px 10px;
+cursor: pointer; font-family: inherit; font-weight: 500;
+-webkit-appearance: none;
 }
+
+.history-pills { display: flex; gap: 6px; flex-wrap: wrap; cursor: pointer; }
 
 .pill {
-font-size: 11px;
-padding: 3px 8px;
-border-radius: 20px;
-font-weight: 500;
+font-size: 11px; padding: 3px 8px;
+border-radius: 20px; font-weight: 500;
 font-family: ‘JetBrains Mono’, monospace;
 }
+.pill-dose { background-color: rgba(108,140,255,0.15); color: #6c8cff; }
+.pill-good { background-color: rgba(78,203,113,0.15); color: #4ecb71; }
+.pill-mid  { background-color: rgba(136,136,160,0.15); color: #8888a0; }
+.pill-bad  { background-color: rgba(224,85,85,0.15); color: #e05555; }
 
-.pill-dose { background: rgba(108, 140, 255, 0.15); color: var(–accent); }
-.pill-good { background: rgba(78, 203, 113, 0.15); color: var(–good); }
-.pill-mid { background: rgba(136, 136, 160, 0.15); color: var(–text-dim); }
-.pill-bad { background: rgba(224, 85, 85, 0.15); color: var(–bad); }
-
-/* Charts */
+/* ── Charts ── */
 .chart-container {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: var(–radius);
-padding: 16px;
-margin-bottom: 12px;
+background-color: #12121a;
+border: 1px solid #2a2a3a;
+border-radius: 12px;
+padding: 16px; margin-bottom: 12px;
 }
+.chart-title { font-size: 13px; font-weight: 600; color: #e8e8ef; margin-bottom: 12px; }
+.chart-wrap { position: relative; height: 200px; }
 
-.chart-title {
-font-size: 13px;
-font-weight: 600;
-color: var(–text);
-margin-bottom: 12px;
-}
+.dose-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.dose-card { background-color: #1a1a25; border-radius: 8px; padding: 12px; text-align: center; }
+.dose-card .dl { font-size: 11px; color: #555568; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.dose-card .dv { font-family: ‘JetBrains Mono’, monospace; font-size: 24px; font-weight: 700; color: #6c8cff; }
+.dose-card .ds { font-size: 11px; color: #8888a0; margin-top: 4px; }
 
-.chart-wrap {
-position: relative;
-height: 200px;
-}
-
-/* Dose comparison */
-.dose-compare {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 8px;
-}
-
-.dose-card {
-background: var(–surface-2);
-border-radius: var(–radius-sm);
-padding: 12px;
-text-align: center;
-}
-
-.dose-card .dose-label {
-font-size: 11px;
-color: var(–text-muted);
-text-transform: uppercase;
-letter-spacing: 1px;
-margin-bottom: 8px;
-}
-
-.dose-card .dose-value {
-font-family: ‘JetBrains Mono’, monospace;
-font-size: 24px;
-font-weight: 700;
-color: var(–accent);
-}
-
-.dose-card .dose-sub {
-font-size: 11px;
-color: var(–text-dim);
-margin-top: 4px;
-}
-
-/* Settings */
+/* ── Settings ── */
 .settings-section {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: var(–radius);
-padding: 20px;
-margin-bottom: 12px;
+background-color: #12121a;
+border: 1px solid #2a2a3a;
+border-radius: 12px;
+padding: 20px; margin-bottom: 12px;
 }
+.settings-section h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+.settings-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.settings-row > label { font-size: 13px; color: #8888a0; width: 70px; flex-shrink: 0; }
 
-.settings-section h3 {
-font-size: 14px;
-font-weight: 600;
-margin-bottom: 12px;
-}
-
-.settings-row {
-display: flex;
-align-items: center;
-gap: 12px;
-margin-bottom: 8px;
-}
-
-.settings-row label {
-font-size: 13px;
-color: var(–text-dim);
-flex: 1;
-}
-
-.settings-row input {
-width: 240px;
-}
-
-.btn-secondary {
+.btn-s {
 padding: 10px 20px;
-border: 1px solid var(–border);
-border-radius: var(–radius-sm);
-background: var(–surface-2);
-color: var(–text);
-font-family: inherit;
-font-size: 13px;
-font-weight: 500;
-cursor: pointer;
-transition: all 0.2s;
+border: 1px solid #2a2a3a;
+border-radius: 8px;
+background-color: #1a1a25;
+color: #e8e8ef;
+font-family: inherit; font-size: 13px; font-weight: 500;
+cursor: pointer; -webkit-appearance: none;
 }
+.btn-s:active { border-color: #6c8cff; color: #6c8cff; }
 
-.btn-secondary:hover { border-color: var(–accent); color: var(–accent); }
-
-.btn-danger {
+.btn-d {
 padding: 10px 20px;
-border: 1px solid var(–bad);
-border-radius: var(–radius-sm);
-background: rgba(224, 85, 85, 0.1);
-color: var(–bad);
-font-family: inherit;
-font-size: 13px;
-font-weight: 500;
-cursor: pointer;
-transition: all 0.2s;
+border: 1px solid #e05555;
+border-radius: 8px;
+background-color: rgba(224,85,85,0.1);
+color: #e05555;
+font-family: inherit; font-size: 13px; font-weight: 500;
+cursor: pointer; -webkit-appearance: none;
 }
 
-.status-bar {
-font-size: 12px;
-color: var(–text-muted);
-padding: 8px 0;
-text-align: center;
-}
+.status-bar { font-size: 12px; color: #555568; padding: 8px 0; text-align: center; }
+.status-bar.ok { color: #4ecb71; }
+.status-bar.err { color: #e05555; }
 
-.status-bar.connected { color: var(–good); }
-.status-bar.error { color: var(–bad); }
+.empty-state { text-align: center; padding: 40px 20px; color: #555568; }
+.empty-state .ei { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+.empty-state p { font-size: 14px; line-height: 1.6; }
 
-/* Empty state */
-.empty-state {
-text-align: center;
-padding: 40px 20px;
-color: var(–text-muted);
-}
-
-.empty-state .empty-icon {
-font-size: 40px;
-margin-bottom: 12px;
-opacity: 0.5;
-}
-
-.empty-state p {
-font-size: 14px;
-line-height: 1.6;
-}
-
-/* Modal */
+/* ── Modal ── */
 .modal-overlay {
-position: fixed;
-inset: 0;
-background: rgba(0,0,0,0.7);
-display: none;
-z-index: 200;
-align-items: flex-end;
-justify-content: center;
+position: fixed; inset: 0;
+background-color: rgba(0,0,0,0.7);
+display: none; z-index: 200;
+align-items: flex-end; justify-content: center;
 }
-
 .modal-overlay.show { display: flex; }
 
 .modal {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: var(–radius) var(–radius) 0 0;
-width: 100%;
-max-width: 480px;
-max-height: 80vh;
-overflow-y: auto;
+background-color: #12121a;
+border: 1px solid #2a2a3a;
+border-radius: 12px 12px 0 0;
+width: 100%; max-width: 480px;
+max-height: 80vh; overflow-y: auto;
 padding: 24px;
 animation: slideUp 0.3s ease;
 }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-@keyframes slideUp {
-from { transform: translateY(100%); }
-to { transform: translateY(0); }
-}
+.modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+.modal-actions { display: flex; gap: 8px; margin-top: 16px; }
 
-.modal h3 {
-font-size: 16px;
-font-weight: 600;
-margin-bottom: 16px;
-}
+.no-data { padding: 20px; text-align: center; color: #555568; font-size: 13px; }
 
-.modal-actions {
-display: flex;
-gap: 8px;
-margin-top: 16px;
-}
-
-.no-data {
-padding: 20px;
-text-align: center;
-color: var(–text-muted);
-font-size: 13px;
-}
-
-/* Correlation matrix */
-.corr-grid {
-display: grid;
-gap: 2px;
-font-size: 10px;
-}
-
+.corr-grid { display: grid; gap: 2px; font-size: 10px; }
 .corr-cell {
-display: flex;
-align-items: center;
-justify-content: center;
-aspect-ratio: 1;
-border-radius: 4px;
-font-family: ‘JetBrains Mono’, monospace;
-font-weight: 500;
+display: flex; align-items: center; justify-content: center;
+aspect-ratio: 1; border-radius: 4px;
+font-family: ‘JetBrains Mono’, monospace; font-weight: 500;
 }
-
 .corr-label {
-display: flex;
-align-items: center;
-font-size: 10px;
-color: var(–text-dim);
-padding: 2px 4px;
-overflow: hidden;
-text-overflow: ellipsis;
-white-space: nowrap;
+display: flex; align-items: center;
+font-size: 10px; color: #8888a0;
+padding: 2px 4px; overflow: hidden;
+text-overflow: ellipsis; white-space: nowrap;
 }
 </style>
 
@@ -620,17 +393,17 @@ white-space: nowrap;
   <div id="statusBar" class="status-bar"></div>
 
   <nav class="nav">
-    <button class="nav-btn active" onclick="showSection('log')">Záznam</button>
-    <button class="nav-btn" onclick="showSection('history')">Historie</button>
-    <button class="nav-btn" onclick="showSection('charts')">Grafy</button>
+    <button class="nav-btn active" data-sec="log">Záznam</button>
+    <button class="nav-btn" data-sec="history">Historie</button>
+    <button class="nav-btn" data-sec="charts">Grafy</button>
   </nav>
 
-  <!-- LOG SECTION -->
+  <!-- ═══ LOG ═══ -->
 
   <div id="section-log" class="section active">
-    <div class="date-display">
-      <input type="date" id="entryDate" onchange="onDateChange()">
-      <span id="entryExists" style="display:none; color: var(--warn);"> — záznam existuje</span>
+    <div class="date-bar">
+      <input type="date" id="entryDate">
+      <span id="entryExists" class="warn" style="display:none;">— záznam existuje</span>
     </div>
 
 ```
@@ -639,10 +412,10 @@ white-space: nowrap;
   <div class="field">
     <label>Dávka (mg)</label>
     <div class="input-row">
-      <input type="number" id="dose" value="18" step="18" min="0" max="108">
+      <input type="number" id="f-dose" value="18" step="18" min="0" max="108">
       <span class="unit">mg</span>
-      <span style="margin-left: 8px;">v</span>
-      <input type="time" id="doseTime" value="07:00">
+      <span class="unit">v</span>
+      <input type="time" id="f-doseTime" value="07:00">
     </div>
   </div>
 </div>
@@ -651,32 +424,32 @@ white-space: nowrap;
   <div class="form-card-title">Metriky (1–5)</div>
   <div class="field">
     <label>Iniciace — jak těžké bylo začít s nudným úkolem</label>
-    <div class="scale" data-field="initiation">
-      <button class="scale-btn" data-value="1">1</button>
-      <button class="scale-btn" data-value="2">2</button>
-      <button class="scale-btn" data-value="3">3</button>
-      <button class="scale-btn" data-value="4">4</button>
-      <button class="scale-btn" data-value="5">5</button>
+    <div class="scale" data-f="initiation">
+      <button class="scale-btn" data-v="1">1</button>
+      <button class="scale-btn" data-v="2">2</button>
+      <button class="scale-btn" data-v="3">3</button>
+      <button class="scale-btn" data-v="4">4</button>
+      <button class="scale-btn" data-v="5">5</button>
     </div>
   </div>
   <div class="field">
     <label>Focus — udržení pozornosti</label>
-    <div class="scale" data-field="focus">
-      <button class="scale-btn" data-value="1">1</button>
-      <button class="scale-btn" data-value="2">2</button>
-      <button class="scale-btn" data-value="3">3</button>
-      <button class="scale-btn" data-value="4">4</button>
-      <button class="scale-btn" data-value="5">5</button>
+    <div class="scale" data-f="focus">
+      <button class="scale-btn" data-v="1">1</button>
+      <button class="scale-btn" data-v="2">2</button>
+      <button class="scale-btn" data-v="3">3</button>
+      <button class="scale-btn" data-v="4">4</button>
+      <button class="scale-btn" data-v="5">5</button>
     </div>
   </div>
   <div class="field">
     <label>Emoční reaktivita — klid vs. výbuch</label>
-    <div class="scale" data-field="emotionalReactivity">
-      <button class="scale-btn" data-value="1">1</button>
-      <button class="scale-btn" data-value="2">2</button>
-      <button class="scale-btn" data-value="3">3</button>
-      <button class="scale-btn" data-value="4">4</button>
-      <button class="scale-btn" data-value="5">5</button>
+    <div class="scale" data-f="emotionalReactivity">
+      <button class="scale-btn" data-v="1">1</button>
+      <button class="scale-btn" data-v="2">2</button>
+      <button class="scale-btn" data-v="3">3</button>
+      <button class="scale-btn" data-v="4">4</button>
+      <button class="scale-btn" data-v="5">5</button>
     </div>
   </div>
 </div>
@@ -685,36 +458,36 @@ white-space: nowrap;
   <div class="form-card-title">Tělo</div>
   <div class="field">
     <label>Hlad zaregistrován?</label>
-    <div class="toggle-group" data-field="hungerNoticed">
-      <button class="toggle-btn" data-value="yes">Ano</button>
-      <button class="toggle-btn" data-value="no">Ne</button>
+    <div class="toggle-group" data-f="hungerNoticed">
+      <button class="toggle-btn" data-v="yes">Ano</button>
+      <button class="toggle-btn" data-v="no">Ne</button>
     </div>
   </div>
   <div class="field">
     <label>První jídlo</label>
-    <input type="time" id="firstMeal" value="11:00" style="width: 120px;">
+    <input type="time" id="f-firstMeal" value="11:00" style="width:120px;">
   </div>
   <div class="field">
     <label>Průměrná tepová frekvence</label>
     <div class="input-row">
-      <input type="number" id="heartRate" min="40" max="200" placeholder="—">
+      <input type="number" id="f-heartRate" min="40" max="200" placeholder="—">
       <span class="unit">bpm</span>
     </div>
   </div>
   <div class="field">
     <label>Tinnitus — změna?</label>
-    <div class="toggle-group" data-field="tinnitus">
-      <button class="toggle-btn" data-value="better">Lepší</button>
-      <button class="toggle-btn" data-value="same">Stejný</button>
-      <button class="toggle-btn" data-value="worse">Horší</button>
+    <div class="toggle-group" data-f="tinnitus">
+      <button class="toggle-btn" data-v="better">Lepší</button>
+      <button class="toggle-btn" data-v="same">Stejný</button>
+      <button class="toggle-btn" data-v="worse">Horší</button>
     </div>
   </div>
   <div class="field">
     <label>RLS — změna?</label>
-    <div class="toggle-group" data-field="rls">
-      <button class="toggle-btn" data-value="better">Lepší</button>
-      <button class="toggle-btn" data-value="same">Stejný</button>
-      <button class="toggle-btn" data-value="worse">Horší</button>
+    <div class="toggle-group" data-f="rls">
+      <button class="toggle-btn" data-v="better">Lepší</button>
+      <button class="toggle-btn" data-v="same">Stejný</button>
+      <button class="toggle-btn" data-v="worse">Horší</button>
     </div>
   </div>
 </div>
@@ -724,28 +497,28 @@ white-space: nowrap;
   <div class="energy-row">
     <div class="energy-block">
       <label>Ráno</label>
-      <div class="energy-select" data-field="energyMorning">
-        <button class="energy-option" data-value="low">Low</button>
-        <button class="energy-option" data-value="ok">OK</button>
-        <button class="energy-option" data-value="good">Good</button>
+      <div class="energy-select" data-f="energyMorning">
+        <button class="energy-option" data-v="low">Low</button>
+        <button class="energy-option" data-v="ok">OK</button>
+        <button class="energy-option" data-v="good">Good</button>
       </div>
     </div>
     <div class="energy-block">
       <label>Odpoledne</label>
-      <div class="energy-select" data-field="energyAfternoon">
-        <button class="energy-option" data-value="low">Low</button>
-        <button class="energy-option" data-value="ok">OK</button>
-        <button class="energy-option" data-value="good">Good</button>
-        <button class="energy-option" data-value="crash">Crash</button>
+      <div class="energy-select" data-f="energyAfternoon">
+        <button class="energy-option" data-v="low">Low</button>
+        <button class="energy-option" data-v="ok">OK</button>
+        <button class="energy-option" data-v="good">Good</button>
+        <button class="energy-option" data-v="crash">Crash</button>
       </div>
     </div>
     <div class="energy-block">
       <label>Večer</label>
-      <div class="energy-select" data-field="energyEvening">
-        <button class="energy-option" data-value="low">Low</button>
-        <button class="energy-option" data-value="ok">OK</button>
-        <button class="energy-option" data-value="good">Good</button>
-        <button class="energy-option" data-value="crash">Crash</button>
+      <div class="energy-select" data-f="energyEvening">
+        <button class="energy-option" data-v="low">Low</button>
+        <button class="energy-option" data-v="ok">OK</button>
+        <button class="energy-option" data-v="good">Good</button>
+        <button class="energy-option" data-v="crash">Crash</button>
       </div>
     </div>
   </div>
@@ -755,18 +528,18 @@ white-space: nowrap;
   <div class="form-card-title">Spánek (minulá noc)</div>
   <div class="field">
     <label>Usínání</label>
-    <div class="toggle-group" data-field="sleepOnset">
-      <button class="toggle-btn" data-value="easy">Lehké</button>
-      <button class="toggle-btn" data-value="normal">Normální</button>
-      <button class="toggle-btn" data-value="hard">Těžké</button>
+    <div class="toggle-group" data-f="sleepOnset">
+      <button class="toggle-btn" data-v="easy">Lehké</button>
+      <button class="toggle-btn" data-v="normal">Normální</button>
+      <button class="toggle-btn" data-v="hard">Těžké</button>
     </div>
   </div>
   <div class="field">
     <label>Probouzení v noci</label>
-    <div class="toggle-group" data-field="nightWaking">
-      <button class="toggle-btn" data-value="none">Ne</button>
-      <button class="toggle-btn" data-value="once">1×</button>
-      <button class="toggle-btn" data-value="multiple">Víckrát</button>
+    <div class="toggle-group" data-f="nightWaking">
+      <button class="toggle-btn" data-v="none">Ne</button>
+      <button class="toggle-btn" data-v="once">1×</button>
+      <button class="toggle-btn" data-v="multiple">Víckrát</button>
     </div>
   </div>
 </div>
@@ -774,92 +547,87 @@ white-space: nowrap;
 <div class="form-card">
   <div class="form-card-title">Poznámka</div>
   <div class="field">
-    <textarea id="note" placeholder="Cokoliv neobvyklého — jedna věta max"></textarea>
+    <textarea id="f-note" placeholder="Cokoliv neobvyklého — jedna věta max"></textarea>
   </div>
 </div>
 
-<button class="submit-btn" onclick="saveEntry()">Uložit záznam</button>
+<button class="submit-btn" id="saveBtn">Uložit záznam</button>
 ```
 
   </div>
 
-  <!-- HISTORY SECTION -->
+  <!-- ═══ HISTORY ═══ -->
 
   <div id="section-history" class="section">
     <div id="historyList"></div>
   </div>
 
-  <!-- CHARTS SECTION -->
+  <!-- ═══ CHARTS ═══ -->
 
   <div id="section-charts" class="section">
     <div class="chart-container">
-      <div class="chart-title">Trendy metrik (7 dní)</div>
-      <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+      <div class="chart-title">Trendy metrik</div>
+      <div class="chart-wrap"><canvas id="chartTrend"></canvas></div>
     </div>
-
-```
-<div class="chart-container">
-  <div class="chart-title">Energie přes den</div>
-  <div class="chart-wrap"><canvas id="energyChart"></canvas></div>
-</div>
-
-<div class="chart-container">
-  <div class="chart-title">Porovnání dávek</div>
-  <div id="doseComparison" class="dose-compare"></div>
-  <div style="height:12px"></div>
-  <div class="chart-wrap"><canvas id="doseChart"></canvas></div>
-</div>
-
-<div class="chart-container">
-  <div class="chart-title">Korelace metrik</div>
-  <div id="corrMatrix"></div>
-</div>
-```
-
+    <div class="chart-container" id="chartHrWrap" style="display:none;">
+      <div class="chart-title">Tepová frekvence</div>
+      <div class="chart-wrap"><canvas id="chartHr"></canvas></div>
+    </div>
+    <div class="chart-container">
+      <div class="chart-title">Energie přes den</div>
+      <div class="chart-wrap"><canvas id="chartEnergy"></canvas></div>
+    </div>
+    <div class="chart-container">
+      <div class="chart-title">Porovnání dávek</div>
+      <div id="doseCards" class="dose-compare"></div>
+      <div style="height:12px"></div>
+      <div class="chart-wrap"><canvas id="chartDose"></canvas></div>
+    </div>
+    <div class="chart-container">
+      <div class="chart-title">Korelace metrik</div>
+      <div id="corrMatrix"></div>
+    </div>
   </div>
 
-  <!-- SETTINGS SECTION -->
+  <!-- ═══ SETTINGS ═══ -->
 
   <div id="section-settings" class="section">
     <div class="settings-section">
       <h3>GitHub Gist</h3>
       <div class="settings-row">
         <label>Token</label>
-        <input type="password" id="gistToken" placeholder="ghp_...">
+        <input type="password" id="s-token" placeholder="ghp_...">
       </div>
       <div class="settings-row">
         <label>Gist ID</label>
-        <input type="text" id="gistId" placeholder="Automaticky vytvoří nový">
+        <input type="text" id="s-gistId" placeholder="Vytvoří se automaticky">
       </div>
-      <div style="margin-top: 12px; display: flex; gap: 8px;">
-        <button class="btn-secondary" onclick="saveSettings()">Uložit</button>
-        <button class="btn-secondary" onclick="testConnection()">Test spojení</button>
+      <div style="margin-top:12px; display:flex; gap:8px;">
+        <button class="btn-s" id="btnSaveSettings">Uložit</button>
+        <button class="btn-s" id="btnTestConn">Test spojení</button>
       </div>
     </div>
-
-```
-<div class="settings-section">
-  <h3>Data</h3>
-  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-    <button class="btn-secondary" onclick="exportJSON()">Export JSON</button>
-    <button class="btn-secondary" onclick="importJSON()">Import JSON</button>
-    <button class="btn-danger" onclick="clearData()">Smazat vše</button>
-  </div>
-</div>
-```
-
+    <div class="settings-section">
+      <h3>Data</h3>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn-s" id="btnExport">Export JSON</button>
+        <button class="btn-s" id="btnImport">Import JSON</button>
+        <button class="btn-d" id="btnClear">Smazat vše</button>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- Detail modal -->
+<!-- ═══ Detail modal ═══ -->
 
-<div id="detailModal" class="modal-overlay" onclick="if(event.target===this)closeModal()">
+<div id="modal" class="modal-overlay">
   <div class="modal">
     <h3 id="modalTitle"></h3>
-    <div id="modalContent"></div>
+    <div id="modalBody"></div>
     <div class="modal-actions">
-      <button class="btn-secondary" onclick="closeModal()">Zavřít</button>
-      <button class="btn-danger" onclick="deleteEntry()">Smazat</button>
+      <button class="btn-s" id="btnModalClose">Zavřít</button>
+      <button class="btn-s" id="btnModalEdit">✏ Editovat</button>
+      <button class="btn-d" id="btnModalDel">Smazat</button>
     </div>
   </div>
 </div>
@@ -867,700 +635,628 @@ white-space: nowrap;
 <div id="toast" class="toast"></div>
 
 <script>
-// =================== STATE ===================
-let entries = [];
-let gistConfig = { token: '', gistId: '' };
-let currentModalDate = null;
-let charts = {};
+/* ═══════════ STATE ═══════════ */
+var entries = [];
+var gist = { token: '', id: '' };
+var modalDate = null;
+var charts = {};
 
-// =================== INIT ===================
-function init() {
-  // Load from localStorage as cache
-  const cached = localStorage.getItem('concerta_entries');
-  if (cached) entries = JSON.parse(cached);
+/* ═══════════ INIT ═══════════ */
+(function init() {
+  try { var c = localStorage.getItem('ct_entries'); if (c) entries = JSON.parse(c); } catch(e){}
+  try { var g = localStorage.getItem('ct_gist'); if (g) gist = JSON.parse(g); } catch(e){}
 
-  const config = localStorage.getItem('concerta_gist');
-  if (config) gistConfig = JSON.parse(config);
+  document.getElementById('s-token').value = gist.token || '';
+  document.getElementById('s-gistId').value = gist.id || '';
+  document.getElementById('entryDate').value = dateKey(new Date());
 
-  document.getElementById('gistToken').value = gistConfig.token || '';
-  document.getElementById('gistId').value = gistConfig.gistId || '';
-
-  // Set today's date
-  const today = new Date();
-  document.getElementById('entryDate').value = getDateKey(today);
-
-  // Check if entry exists for today
-  checkTodayEntry();
-
-  // Init scale/toggle buttons
-  initButtons();
-
-  // Sync from Gist if configured
-  if (gistConfig.token && gistConfig.gistId) {
-    syncGist();
-  }
-
+  checkExists();
+  bindButtons();
   updateStatus();
-}
 
-function initButtons() {
-  document.querySelectorAll('.scale').forEach(scale => {
-    scale.querySelectorAll('.scale-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        scale.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-      });
-    });
-  });
+  if (gist.token && gist.id) syncGist();
+})();
 
-  document.querySelectorAll('.toggle-group').forEach(group => {
-    group.querySelectorAll('.toggle-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-      });
-    });
-  });
-
-  document.querySelectorAll('.energy-select').forEach(group => {
-    group.querySelectorAll('.energy-option').forEach(btn => {
-      btn.addEventListener('click', () => {
-        group.querySelectorAll('.energy-option').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-      });
-    });
-  });
-}
-
-// =================== NAVIGATION ===================
-function showSection(name) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-
-  document.getElementById(`section-${name}`).classList.add('active');
-
-  if (name === 'settings') {
-    // No nav button for settings
-  } else {
-    document.querySelectorAll('.nav-btn').forEach(b => {
-      if (b.textContent.toLowerCase().includes(
-        name === 'log' ? 'záznam' : name === 'history' ? 'historie' : 'graf'
-      )) b.classList.add('active');
-    });
+function bindButtons() {
+  // Nav
+  var navBtns = document.querySelectorAll('.nav-btn');
+  for (var i = 0; i < navBtns.length; i++) {
+    navBtns[i].addEventListener('click', function() { showSection(this.dataset.sec); });
   }
 
+  // Scale buttons
+  var scales = document.querySelectorAll('.scale');
+  for (var i = 0; i < scales.length; i++) {
+    var btns = scales[i].querySelectorAll('.scale-btn');
+    for (var j = 0; j < btns.length; j++) {
+      btns[j].addEventListener('click', function() {
+        var siblings = this.parentElement.querySelectorAll('.scale-btn');
+        for (var k = 0; k < siblings.length; k++) siblings[k].className = 'scale-btn';
+        this.className = 'scale-btn s' + this.dataset.v;
+      });
+    }
+  }
+
+  // Toggle buttons
+  var toggles = document.querySelectorAll('.toggle-group');
+  for (var i = 0; i < toggles.length; i++) {
+    var btns = toggles[i].querySelectorAll('.toggle-btn');
+    for (var j = 0; j < btns.length; j++) {
+      btns[j].addEventListener('click', function() {
+        var siblings = this.parentElement.querySelectorAll('.toggle-btn');
+        for (var k = 0; k < siblings.length; k++) siblings[k].className = 'toggle-btn';
+        this.className = 'toggle-btn sel';
+      });
+    }
+  }
+
+  // Energy buttons
+  var energies = document.querySelectorAll('.energy-select');
+  for (var i = 0; i < energies.length; i++) {
+    var btns = energies[i].querySelectorAll('.energy-option');
+    for (var j = 0; j < btns.length; j++) {
+      btns[j].addEventListener('click', function() {
+        var siblings = this.parentElement.querySelectorAll('.energy-option');
+        for (var k = 0; k < siblings.length; k++) siblings[k].className = 'energy-option';
+        this.className = 'energy-option sel';
+      });
+    }
+  }
+
+  document.getElementById('entryDate').addEventListener('change', function() {
+    checkExists();
+    loadFormForDate(this.value);
+  });
+
+  document.getElementById('saveBtn').addEventListener('click', saveEntry);
+  document.getElementById('btnSaveSettings').addEventListener('click', saveSettings);
+  document.getElementById('btnTestConn').addEventListener('click', testConnection);
+  document.getElementById('btnExport').addEventListener('click', exportJSON);
+  document.getElementById('btnImport').addEventListener('click', importJSON);
+  document.getElementById('btnClear').addEventListener('click', clearData);
+
+  document.getElementById('modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+  document.getElementById('btnModalClose').addEventListener('click', closeModal);
+  document.getElementById('btnModalEdit').addEventListener('click', editFromModal);
+  document.getElementById('btnModalDel').addEventListener('click', deleteEntry);
+}
+
+/* ═══════════ NAV ═══════════ */
+function showSection(name) {
+  var sections = document.querySelectorAll('.section');
+  for (var i = 0; i < sections.length; i++) sections[i].classList.remove('active');
+  var navBtns = document.querySelectorAll('.nav-btn');
+  for (var i = 0; i < navBtns.length; i++) navBtns[i].classList.remove('active');
+  document.getElementById('section-' + name).classList.add('active');
+  var nb = document.querySelector('.nav-btn[data-sec="' + name + '"]');
+  if (nb) nb.classList.add('active');
   if (name === 'history') renderHistory();
   if (name === 'charts') renderCharts();
 }
 
-// =================== FORM ===================
-function getFormValue(field) {
-  const el = document.querySelector(`[data-field="${field}"] .selected`);
-  return el ? el.dataset.value : null;
+/* ═══════════ FORM ═══════════ */
+function gv(field) {
+  // Check scale buttons (have s1-s5 class)
+  var scaleEl = document.querySelector('[data-f="' + field + '"] .s1, [data-f="' + field + '"] .s2, [data-f="' + field + '"] .s3, [data-f="' + field + '"] .s4, [data-f="' + field + '"] .s5');
+  if (scaleEl) return scaleEl.dataset.v;
+  // Check toggle/energy buttons (have sel class)
+  var selEl = document.querySelector('[data-f="' + field + '"] .sel');
+  if (selEl) return selEl.dataset.v;
+  return null;
 }
 
-function getDateKey(d) {
-  return d.toISOString().slice(0, 10);
-}
+function dateKey(d) { return d.toISOString().slice(0, 10); }
 
-function checkTodayEntry() {
-  const selectedDate = document.getElementById('entryDate').value;
-  const exists = entries.find(e => e.date === selectedDate);
+function checkExists() {
+  var date = document.getElementById('entryDate').value;
+  var exists = false;
+  for (var i = 0; i < entries.length; i++) { if (entries[i].date === date) { exists = true; break; } }
   document.getElementById('entryExists').style.display = exists ? 'inline' : 'none';
 }
 
-function onDateChange() {
-  checkTodayEntry();
-  loadEntryForDate(document.getElementById('entryDate').value);
+function resetForm() {
+  var sbs = document.querySelectorAll('.scale-btn');
+  for (var i = 0; i < sbs.length; i++) sbs[i].className = 'scale-btn';
+  var tbs = document.querySelectorAll('.toggle-btn');
+  for (var i = 0; i < tbs.length; i++) tbs[i].className = 'toggle-btn';
+  var eos = document.querySelectorAll('.energy-option');
+  for (var i = 0; i < eos.length; i++) eos[i].className = 'energy-option';
+  document.getElementById('f-dose').value = 18;
+  document.getElementById('f-doseTime').value = '07:00';
+  document.getElementById('f-firstMeal').value = '11:00';
+  document.getElementById('f-heartRate').value = '';
+  document.getElementById('f-note').value = '';
 }
 
-function loadEntryForDate(date) {
-  const e = entries.find(x => x.date === date);
-
-  // Reset all selections
-  document.querySelectorAll('.scale-btn, .toggle-btn, .energy-option').forEach(b => b.classList.remove('selected'));
-  document.getElementById('dose').value = 18;
-  document.getElementById('doseTime').value = '07:00';
-  document.getElementById('firstMeal').value = '11:00';
-  document.getElementById('heartRate').value = '';
-  document.getElementById('note').value = '';
-
+function loadFormForDate(date) {
+  resetForm();
+  var e = null;
+  for (var i = 0; i < entries.length; i++) { if (entries[i].date === date) { e = entries[i]; break; } }
   if (!e) return;
 
-  // Populate form
-  document.getElementById('dose').value = e.dose || 18;
-  document.getElementById('doseTime').value = e.doseTime || '07:00';
-  document.getElementById('firstMeal').value = e.firstMeal || '11:00';
-  document.getElementById('heartRate').value = e.heartRate || '';
-  document.getElementById('note').value = e.note || '';
+  document.getElementById('f-dose').value = e.dose || 18;
+  document.getElementById('f-doseTime').value = e.doseTime || '07:00';
+  document.getElementById('f-firstMeal').value = e.firstMeal || '11:00';
+  document.getElementById('f-heartRate').value = e.heartRate || '';
+  document.getElementById('f-note').value = e.note || '';
 
-  // Set scale buttons
-  ['initiation', 'focus', 'emotionalReactivity'].forEach(field => {
-    if (e[field]) {
-      const btn = document.querySelector(`[data-field="${field}"] .scale-btn[data-value="${e[field]}"]`);
-      if (btn) btn.classList.add('selected');
+  var scaleFields = ['initiation', 'focus', 'emotionalReactivity'];
+  for (var i = 0; i < scaleFields.length; i++) {
+    var f = scaleFields[i];
+    if (e[f]) {
+      var btn = document.querySelector('[data-f="' + f + '"] [data-v="' + e[f] + '"]');
+      if (btn) btn.className = 'scale-btn s' + e[f];
     }
-  });
+  }
 
-  // Set toggle buttons
-  ['hungerNoticed', 'tinnitus', 'rls', 'sleepOnset', 'nightWaking'].forEach(field => {
-    if (e[field]) {
-      const btn = document.querySelector(`[data-field="${field}"] [data-value="${e[field]}"]`);
-      if (btn) btn.classList.add('selected');
+  var toggleFields = ['hungerNoticed', 'tinnitus', 'rls', 'sleepOnset', 'nightWaking'];
+  for (var i = 0; i < toggleFields.length; i++) {
+    var f = toggleFields[i];
+    if (e[f]) {
+      var btn = document.querySelector('[data-f="' + f + '"] [data-v="' + e[f] + '"]');
+      if (btn) btn.className = 'toggle-btn sel';
     }
-  });
+  }
 
-  // Set energy buttons
-  ['energyMorning', 'energyAfternoon', 'energyEvening'].forEach(field => {
-    if (e[field]) {
-      const btn = document.querySelector(`[data-field="${field}"] [data-value="${e[field]}"]`);
-      if (btn) btn.classList.add('selected');
+  var energyFields = ['energyMorning', 'energyAfternoon', 'energyEvening'];
+  for (var i = 0; i < energyFields.length; i++) {
+    var f = energyFields[i];
+    if (e[f]) {
+      var btn = document.querySelector('[data-f="' + f + '"] [data-v="' + e[f] + '"]');
+      if (btn) btn.className = 'energy-option sel';
     }
-  });
+  }
 }
 
 function saveEntry() {
-  const entry = {
+  var entry = {
     date: document.getElementById('entryDate').value,
     timestamp: new Date().toISOString(),
-    dose: parseInt(document.getElementById('dose').value) || 0,
-    doseTime: document.getElementById('doseTime').value,
-    initiation: parseInt(getFormValue('initiation')) || null,
-    focus: parseInt(getFormValue('focus')) || null,
-    emotionalReactivity: parseInt(getFormValue('emotionalReactivity')) || null,
-    hungerNoticed: getFormValue('hungerNoticed'),
-    firstMeal: document.getElementById('firstMeal').value,
-    heartRate: parseInt(document.getElementById('heartRate').value) || null,
-    tinnitus: getFormValue('tinnitus'),
-    rls: getFormValue('rls'),
-    energyMorning: getFormValue('energyMorning'),
-    energyAfternoon: getFormValue('energyAfternoon'),
-    energyEvening: getFormValue('energyEvening'),
-    sleepOnset: getFormValue('sleepOnset'),
-    nightWaking: getFormValue('nightWaking'),
-    note: document.getElementById('note').value.trim()
+    dose: parseInt(document.getElementById('f-dose').value) || 0,
+    doseTime: document.getElementById('f-doseTime').value,
+    initiation: parseInt(gv('initiation')) || null,
+    focus: parseInt(gv('focus')) || null,
+    emotionalReactivity: parseInt(gv('emotionalReactivity')) || null,
+    hungerNoticed: gv('hungerNoticed'),
+    firstMeal: document.getElementById('f-firstMeal').value,
+    heartRate: parseInt(document.getElementById('f-heartRate').value) || null,
+    tinnitus: gv('tinnitus'),
+    rls: gv('rls'),
+    energyMorning: gv('energyMorning'),
+    energyAfternoon: gv('energyAfternoon'),
+    energyEvening: gv('energyEvening'),
+    sleepOnset: gv('sleepOnset'),
+    nightWaking: gv('nightWaking'),
+    note: document.getElementById('f-note').value.trim()
   };
 
-  // Replace or add
-  const idx = entries.findIndex(e => e.date === entry.date);
-  if (idx >= 0) {
-    entries[idx] = entry;
-  } else {
-    entries.push(entry);
-  }
-
-  entries.sort((a, b) => a.date.localeCompare(b.date));
+  var idx = -1;
+  for (var i = 0; i < entries.length; i++) { if (entries[i].date === entry.date) { idx = i; break; } }
+  if (idx >= 0) entries[idx] = entry; else entries.push(entry);
+  entries.sort(function(a, b) { return a.date.localeCompare(b.date); });
   saveLocal();
   saveToGist();
-  checkTodayEntry();
-  showToast('Záznam uložen ✓');
+  checkExists();
+  toast('Záznam uložen ✓');
 }
 
-// =================== STORAGE ===================
-function saveLocal() {
-  localStorage.setItem('concerta_entries', JSON.stringify(entries));
-}
+/* ═══════════ STORAGE ═══════════ */
+function saveLocal() { localStorage.setItem('ct_entries', JSON.stringify(entries)); }
 
 function saveSettings() {
-  gistConfig.token = document.getElementById('gistToken').value.trim();
-  gistConfig.gistId = document.getElementById('gistId').value.trim();
-  localStorage.setItem('concerta_gist', JSON.stringify(gistConfig));
-  showToast('Nastavení uloženo');
+  gist.token = document.getElementById('s-token').value.trim();
+  gist.id = document.getElementById('s-gistId').value.trim();
+  localStorage.setItem('ct_gist', JSON.stringify(gist));
+  toast('Nastavení uloženo');
   updateStatus();
 }
 
-// =================== GIST API ===================
+/* ═══════════ GIST ═══════════ */
 async function saveToGist() {
-  if (!gistConfig.token) return;
-
-  const data = {
-    files: {
-      'concerta-data.json': {
-        content: JSON.stringify(entries, null, 2)
-      }
-    }
-  };
-
+  if (!gist.token) return;
+  var payload = { files: { 'concerta-data.json': { content: JSON.stringify(entries, null, 2) } } };
   try {
-    if (gistConfig.gistId) {
-      await fetch(`https://api.github.com/gists/${gistConfig.gistId}`, {
+    if (gist.id) {
+      await fetch('https://api.github.com/gists/' + gist.id, {
         method: 'PATCH',
-        headers: {
-          'Authorization': `token ${gistConfig.token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+        headers: { 'Authorization': 'token ' + gist.token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
     } else {
-      data.description = 'Concerta Tracker Data';
-      data.public = false;
-      const res = await fetch('https://api.github.com/gists', {
+      payload.description = 'Concerta Tracker Data';
+      payload.public = false;
+      var res = await fetch('https://api.github.com/gists', {
         method: 'POST',
-        headers: {
-          'Authorization': `token ${gistConfig.token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+        headers: { 'Authorization': 'token ' + gist.token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
-      const json = await res.json();
-      gistConfig.gistId = json.id;
-      document.getElementById('gistId').value = json.id;
-      localStorage.setItem('concerta_gist', JSON.stringify(gistConfig));
+      var json = await res.json();
+      gist.id = json.id;
+      document.getElementById('s-gistId').value = json.id;
+      localStorage.setItem('ct_gist', JSON.stringify(gist));
     }
     updateStatus('Synchronizováno', true);
   } catch (err) {
-    console.error('Gist save error:', err);
-    updateStatus('Chyba synchronizace', false);
+    console.error('Gist save:', err);
+    updateStatus('Chyba sync', false);
   }
 }
 
 async function syncGist() {
-  if (!gistConfig.token || !gistConfig.gistId) return;
-
+  if (!gist.token || !gist.id) return;
   try {
-    const res = await fetch(`https://api.github.com/gists/${gistConfig.gistId}`, {
-      headers: { 'Authorization': `token ${gistConfig.token}` }
+    var res = await fetch('https://api.github.com/gists/' + gist.id, {
+      headers: { 'Authorization': 'token ' + gist.token }
     });
-    const json = await res.json();
-    const content = json.files['concerta-data.json']?.content;
+    var json = await res.json();
+    var content = json.files && json.files['concerta-data.json'] && json.files['concerta-data.json'].content;
     if (content) {
-      const remote = JSON.parse(content);
-      // Merge: remote wins for same date, keep unique from both
-      const merged = {};
-      remote.forEach(e => merged[e.date] = e);
-      entries.forEach(e => { if (!merged[e.date]) merged[e.date] = e; });
-      entries = Object.values(merged).sort((a, b) => a.date.localeCompare(b.date));
+      var remote = JSON.parse(content);
+      var merged = {};
+      for (var i = 0; i < remote.length; i++) merged[remote[i].date] = remote[i];
+      for (var i = 0; i < entries.length; i++) { if (!merged[entries[i].date]) merged[entries[i].date] = entries[i]; }
+      entries = Object.values(merged).sort(function(a, b) { return a.date.localeCompare(b.date); });
       saveLocal();
-      checkTodayEntry();
+      checkExists();
       updateStatus('Synchronizováno', true);
     }
   } catch (err) {
-    console.error('Gist sync error:', err);
-    updateStatus('Chyba synchronizace', false);
+    console.error('Gist sync:', err);
+    updateStatus('Chyba sync', false);
   }
 }
 
 async function testConnection() {
-  const token = document.getElementById('gistToken').value.trim();
-  if (!token) { showToast('Zadej token'); return; }
-
+  var token = document.getElementById('s-token').value.trim();
+  if (!token) { toast('Zadej token'); return; }
   try {
-    const res = await fetch('https://api.github.com/user', {
-      headers: { 'Authorization': `token ${token}` }
+    var res = await fetch('https://api.github.com/user', {
+      headers: { 'Authorization': 'token ' + token }
     });
-    const json = await res.json();
+    var json = await res.json();
     if (json.login) {
-      showToast(`Spojení OK — ${json.login}`);
-      updateStatus(`Připojeno jako ${json.login}`, true);
+      toast('OK — ' + json.login);
+      updateStatus('Připojeno: ' + json.login, true);
     } else {
-      showToast('Token nefunguje');
-      updateStatus('Token neplatný', false);
+      toast('Token nefunguje');
+      updateStatus('Neplatný token', false);
     }
   } catch (err) {
-    showToast('Chyba spojení');
+    toast('Chyba spojení');
     updateStatus('Chyba spojení', false);
   }
 }
 
 function updateStatus(msg, ok) {
-  const bar = document.getElementById('statusBar');
-  if (msg) {
-    bar.textContent = msg;
-    bar.className = 'status-bar ' + (ok ? 'connected' : 'error');
-  } else if (gistConfig.token && gistConfig.gistId) {
-    bar.textContent = 'Gist nakonfigurován';
-    bar.className = 'status-bar connected';
-  } else if (gistConfig.token) {
-    bar.textContent = 'Token zadán, Gist ID chybí';
-    bar.className = 'status-bar';
-  } else {
-    bar.textContent = 'Offline mód — nastav Gist v ⚙';
-    bar.className = 'status-bar';
-  }
+  var bar = document.getElementById('statusBar');
+  if (msg) { bar.textContent = msg; bar.className = 'status-bar ' + (ok ? 'ok' : 'err'); }
+  else if (gist.token && gist.id) { bar.textContent = 'Gist nakonfigurován'; bar.className = 'status-bar ok'; }
+  else if (gist.token) { bar.textContent = 'Token zadán, Gist ID chybí'; bar.className = 'status-bar'; }
+  else { bar.textContent = 'Offline — nastav Gist v ⚙'; bar.className = 'status-bar'; }
 }
 
-// =================== HISTORY ===================
+/* ═══════════ HISTORY ═══════════ */
 function renderHistory() {
-  const list = document.getElementById('historyList');
-  if (entries.length === 0) {
-    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><p>Zatím žádné záznamy</p></div>';
+  var list = document.getElementById('historyList');
+  if (!entries.length) {
+    list.innerHTML = '<div class="empty-state"><div class="ei">📋</div><p>Zatím žádné záznamy</p></div>';
     return;
   }
-
-  list.innerHTML = [...entries].reverse().map(e => {
-    const d = new Date(e.date + 'T12:00:00');
-    const dateStr = d.toLocaleDateString('cs-CZ', { weekday: 'short', day: 'numeric', month: 'short' });
-    const pills = [];
-    if (e.dose) pills.push(`<span class="pill pill-dose">${e.dose}mg</span>`);
-    if (e.initiation) pills.push(`<span class="pill ${pillClass(e.initiation)}">Init ${e.initiation}</span>`);
-    if (e.focus) pills.push(`<span class="pill ${pillClass(e.focus)}">Focus ${e.focus}</span>`);
-    if (e.emotionalReactivity) pills.push(`<span class="pill ${pillClass(e.emotionalReactivity)}">Emo ${e.emotionalReactivity}</span>`);
-    if (e.heartRate) pills.push(`<span class="pill pill-dose">${e.heartRate}bpm</span>`);
-    return `<div class="history-item" onclick="showDetail('${e.date}')">
-      <div class="history-date">${dateStr}</div>
-      <div class="history-pills">${pills.join('')}</div>
-    </div>`;
-  }).join('');
+  var html = '';
+  for (var i = entries.length - 1; i >= 0; i--) {
+    var e = entries[i];
+    var d = new Date(e.date + 'T12:00:00');
+    var ds = d.toLocaleDateString('cs-CZ', { weekday: 'short', day: 'numeric', month: 'short' });
+    var pills = '';
+    if (e.dose) pills += '<span class="pill pill-dose">' + e.dose + 'mg</span>';
+    if (e.initiation) pills += '<span class="pill ' + pc(e.initiation) + '">Init ' + e.initiation + '</span>';
+    if (e.focus) pills += '<span class="pill ' + pc(e.focus) + '">Focus ' + e.focus + '</span>';
+    if (e.emotionalReactivity) pills += '<span class="pill ' + pc(e.emotionalReactivity) + '">Emo ' + e.emotionalReactivity + '</span>';
+    if (e.heartRate) pills += '<span class="pill pill-dose">' + e.heartRate + 'bpm</span>';
+    html += '<div class="history-item">' +
+      '<div class="history-top">' +
+        '<span class="history-date">' + ds + '</span>' +
+        '<button class="history-edit" onclick="editEntry(\'' + e.date + '\')">✏ Edit</button>' +
+      '</div>' +
+      '<div class="history-pills" onclick="showDetail(\'' + e.date + '\')">' + pills + '</div>' +
+    '</div>';
+  }
+  list.innerHTML = html;
 }
 
-function pillClass(val) {
-  if (val >= 4) return 'pill-good';
-  if (val === 3) return 'pill-mid';
-  return 'pill-bad';
+function pc(v) { return v >= 4 ? 'pill-good' : v === 3 ? 'pill-mid' : 'pill-bad'; }
+
+function editEntry(date) {
+  document.getElementById('entryDate').value = date;
+  loadFormForDate(date);
+  checkExists();
+  showSection('log');
+  toast('Editace záznamu');
 }
 
 function showDetail(date) {
-  currentModalDate = date;
-  const e = entries.find(x => x.date === date);
+  modalDate = date;
+  var e = null;
+  for (var i = 0; i < entries.length; i++) { if (entries[i].date === date) { e = entries[i]; break; } }
   if (!e) return;
-
-  const d = new Date(date + 'T12:00:00');
+  var d = new Date(date + 'T12:00:00');
   document.getElementById('modalTitle').textContent = d.toLocaleDateString('cs-CZ', { weekday: 'long', day: 'numeric', month: 'long' });
-
-  const energyLabels = { low: '⬇ Low', ok: '→ OK', good: '⬆ Good', crash: '💥 Crash' };
-  const sleepLabels = { easy: 'Lehké', normal: 'Normální', hard: 'Těžké' };
-  const wakingLabels = { none: 'Ne', once: '1×', multiple: 'Víckrát' };
-  const changeLabels = { better: '✓ Lepší', same: '= Stejný', worse: '✗ Horší' };
-
-  let html = `<div style="display:grid; gap:8px;">`;
-  html += `<div class="pill pill-dose" style="display:inline-block; width:fit-content;">${e.dose}mg v ${e.doseTime}</div>`;
-  html += row('Iniciace', scaleBar(e.initiation));
-  html += row('Focus', scaleBar(e.focus));
-  html += row('Emoční reaktivita', scaleBar(e.emotionalReactivity));
-  html += row('Hlad', e.hungerNoticed === 'yes' ? 'Ano' : 'Ne');
-  html += row('První jídlo', e.firstMeal || '—');
-  html += row('Tepová frekvence', e.heartRate ? `${e.heartRate} bpm` : '—');
-  html += row('Tinnitus', changeLabels[e.tinnitus] || '—');
-  html += row('RLS', changeLabels[e.rls] || '—');
-  html += row('Energie', `${energyLabels[e.energyMorning]||'—'} → ${energyLabels[e.energyAfternoon]||'—'} → ${energyLabels[e.energyEvening]||'—'}`);
-  html += row('Usínání', sleepLabels[e.sleepOnset] || '—');
-  html += row('Noční probouzení', wakingLabels[e.nightWaking] || '—');
-  if (e.note) html += row('Poznámka', e.note);
-  html += `</div>`;
-
-  document.getElementById('modalContent').innerHTML = html;
-  document.getElementById('detailModal').classList.add('show');
+  var el = { low: '⬇ Low', ok: '→ OK', good: '⬆ Good', crash: '💥 Crash' };
+  var sl = { easy: 'Lehké', normal: 'Normální', hard: 'Těžké' };
+  var wl = { none: 'Ne', once: '1×', multiple: 'Víckrát' };
+  var cl = { better: '✓ Lepší', same: '= Stejný', worse: '✗ Horší' };
+  var h = '<div style="display:grid;gap:6px;">';
+  h += '<div class="pill pill-dose" style="display:inline-block;width:fit-content;">' + e.dose + 'mg v ' + e.doseTime + '</div>';
+  h += mr('Iniciace', sb(e.initiation));
+  h += mr('Focus', sb(e.focus));
+  h += mr('Emo. reaktivita', sb(e.emotionalReactivity));
+  h += mr('Hlad', e.hungerNoticed === 'yes' ? 'Ano' : 'Ne');
+  h += mr('První jídlo', e.firstMeal || '—');
+  h += mr('Tepová frekvence', e.heartRate ? e.heartRate + ' bpm' : '—');
+  h += mr('Tinnitus', cl[e.tinnitus] || '—');
+  h += mr('RLS', cl[e.rls] || '—');
+  h += mr('Energie', (el[e.energyMorning]||'—') + ' → ' + (el[e.energyAfternoon]||'—') + ' → ' + (el[e.energyEvening]||'—'));
+  h += mr('Usínání', sl[e.sleepOnset] || '—');
+  h += mr('Noční probouzení', wl[e.nightWaking] || '—');
+  if (e.note) h += mr('Poznámka', e.note);
+  h += '</div>';
+  document.getElementById('modalBody').innerHTML = h;
+  document.getElementById('modal').classList.add('show');
 }
 
-function row(label, value) {
-  return `<div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--border);">
-    <span style="color:var(--text-dim); font-size:13px;">${label}</span>
-    <span style="font-size:13px; font-weight:500;">${value}</span>
-  </div>`;
+function mr(l, v) {
+  return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #2a2a3a;">' +
+    '<span style="color:#8888a0;font-size:13px;">' + l + '</span>' +
+    '<span style="font-size:13px;font-weight:500;">' + v + '</span></div>';
 }
 
-function scaleBar(val) {
-  if (!val) return '—';
-  const colors = ['', 'var(--bad)', 'var(--warn)', 'var(--text-dim)', 'var(--accent)', 'var(--good)'];
-  return `<span style="color:${colors[val]}; font-family:'JetBrains Mono',monospace; font-weight:600;">${val}/5</span>`;
+function sb(v) {
+  if (!v) return '—';
+  var c = ['','#e05555','#f0a030','#8888a0','#6c8cff','#4ecb71'];
+  return '<span style="color:' + c[v] + ';font-family:JetBrains Mono,monospace;font-weight:600;">' + v + '/5</span>';
 }
 
-function closeModal() {
-  document.getElementById('detailModal').classList.remove('show');
-  currentModalDate = null;
+function closeModal() { document.getElementById('modal').classList.remove('show'); modalDate = null; }
+
+function editFromModal() {
+  if (!modalDate) return;
+  closeModal();
+  editEntry(modalDate);
 }
 
 function deleteEntry() {
-  if (!currentModalDate) return;
-  if (!confirm('Smazat tento záznam?')) return;
-  entries = entries.filter(e => e.date !== currentModalDate);
-  saveLocal();
-  saveToGist();
-  closeModal();
-  renderHistory();
-  checkTodayEntry();
-  showToast('Smazáno');
+  if (!modalDate || !confirm('Smazat tento záznam?')) return;
+  entries = entries.filter(function(e) { return e.date !== modalDate; });
+  saveLocal(); saveToGist(); closeModal(); renderHistory(); checkExists();
+  toast('Smazáno');
 }
 
-// =================== CHARTS ===================
+/* ═══════════ CHARTS ═══════════ */
 function renderCharts() {
+  var containers = document.querySelectorAll('#section-charts .chart-container');
   if (entries.length < 2) {
-    document.getElementById('section-charts').innerHTML = '<div class="no-data">Potřeba alespoň 2 záznamy pro grafy</div>';
+    for (var i = 0; i < containers.length; i++) containers[i].style.display = 'none';
+    var nd = document.getElementById('noDataMsg');
+    if (!nd) {
+      document.getElementById('section-charts').insertAdjacentHTML('afterbegin',
+        '<div class="no-data" id="noDataMsg">Potřeba alespoň 2 záznamy pro grafy</div>');
+    }
     return;
   }
-
-  renderTrendChart();
-  renderEnergyChart();
-  renderDoseComparison();
-  renderCorrelation();
+  var nd = document.getElementById('noDataMsg');
+  if (nd) nd.remove();
+  for (var i = 0; i < containers.length; i++) containers[i].style.display = 'block';
+  renderTrend(); renderHr(); renderEnergy(); renderDose(); renderCorr();
 }
 
-function renderTrendChart() {
-  const ctx = document.getElementById('trendChart');
+function renderTrend() {
+  var ctx = document.getElementById('chartTrend');
   if (charts.trend) charts.trend.destroy();
-
-  const recent = entries.slice(-14);
-  const labels = recent.map(e => {
-    const d = new Date(e.date + 'T12:00:00');
-    return d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric' });
-  });
-
+  var r = entries.slice(-14);
+  var lb = r.map(function(e) { return fmtDate(e.date); });
   charts.trend = new Chart(ctx, {
     type: 'line',
-    data: {
-      labels,
-      datasets: [
-        { label: 'Iniciace', data: recent.map(e => e.initiation), borderColor: '#6c8cff', backgroundColor: 'rgba(108,140,255,0.1)', tension: 0.3, fill: false },
-        { label: 'Focus', data: recent.map(e => e.focus), borderColor: '#4ecb71', backgroundColor: 'rgba(78,203,113,0.1)', tension: 0.3, fill: false },
-        { label: 'Emo. reaktivita', data: recent.map(e => e.emotionalReactivity), borderColor: '#f0a030', backgroundColor: 'rgba(240,160,48,0.1)', tension: 0.3, fill: false }
-      ]
-    },
-    options: chartOptions(1, 5)
+    data: { labels: lb, datasets: [
+      mkds('Iniciace', r.map(function(e){return e.initiation;}), '#6c8cff'),
+      mkds('Focus', r.map(function(e){return e.focus;}), '#4ecb71'),
+      mkds('Emo. reaktivita', r.map(function(e){return e.emotionalReactivity;}), '#f0a030')
+    ]},
+    options: co(1, 5)
   });
-
-  // Heart rate separate chart (different scale)
-  if (recent.some(e => e.heartRate)) {
-    let hrCanvas = document.getElementById('hrTrendChart');
-    if (!hrCanvas) {
-      const container = document.createElement('div');
-      container.className = 'chart-container';
-      container.innerHTML = '<div class="chart-title">Tepová frekvence</div><div class="chart-wrap"><canvas id="hrTrendChart"></canvas></div>';
-      document.getElementById('trendChart').closest('.chart-container').after(container);
-      hrCanvas = document.getElementById('hrTrendChart');
-    }
-    if (charts.hrTrend) charts.hrTrend.destroy();
-    charts.hrTrend = new Chart(hrCanvas, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
-          { label: 'Tepová frekvence', data: recent.map(e => e.heartRate), borderColor: '#e05555', backgroundColor: 'rgba(224,85,85,0.1)', tension: 0.3, fill: true, pointRadius: 4 }
-        ]
-      },
-      options: chartOptions(50, 120)
-    });
-  }
 }
 
-function renderEnergyChart() {
-  const ctx = document.getElementById('energyChart');
-  if (charts.energy) charts.energy.destroy();
-
-  const energyMap = { low: 1, ok: 2, good: 3, crash: 0 };
-  const recent = entries.slice(-14);
-  const labels = recent.map(e => {
-    const d = new Date(e.date + 'T12:00:00');
-    return d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric' });
+function renderHr() {
+  var wrap = document.getElementById('chartHrWrap');
+  var r = entries.slice(-14);
+  var hasHr = false;
+  for (var i = 0; i < r.length; i++) { if (r[i].heartRate) { hasHr = true; break; } }
+  if (!hasHr) { wrap.style.display = 'none'; return; }
+  wrap.style.display = 'block';
+  var ctx = document.getElementById('chartHr');
+  if (charts.hr) charts.hr.destroy();
+  charts.hr = new Chart(ctx, {
+    type: 'line',
+    data: { labels: r.map(function(e){return fmtDate(e.date);}), datasets: [
+      { label: 'bpm', data: r.map(function(e){return e.heartRate;}), borderColor: '#e05555', backgroundColor: 'rgba(224,85,85,0.1)', tension: 0.3, fill: true, pointRadius: 4 }
+    ]},
+    options: co(50, 120)
   });
+}
 
+function renderEnergy() {
+  var ctx = document.getElementById('chartEnergy');
+  if (charts.energy) charts.energy.destroy();
+  var em = { low: 1, ok: 2, good: 3, crash: 0 };
+  var r = entries.slice(-14);
+  var opts = co(0, 3);
+  opts.scales.y.ticks.callback = function(v) { return ['Crash','Low','OK','Good'][v]||''; };
   charts.energy = new Chart(ctx, {
     type: 'bar',
-    data: {
-      labels,
-      datasets: [
-        { label: 'Ráno', data: recent.map(e => energyMap[e.energyMorning] ?? null), backgroundColor: 'rgba(108,140,255,0.6)' },
-        { label: 'Odpoledne', data: recent.map(e => energyMap[e.energyAfternoon] ?? null), backgroundColor: 'rgba(78,203,113,0.6)' },
-        { label: 'Večer', data: recent.map(e => energyMap[e.energyEvening] ?? null), backgroundColor: 'rgba(168,139,250,0.6)' }
-      ]
-    },
-    options: {
-      ...chartOptions(0, 3),
-      scales: {
-        ...chartOptions(0, 3).scales,
-        y: {
-          ...chartOptions(0, 3).scales.y,
-          ticks: {
-            ...chartOptions(0, 3).scales.y.ticks,
-            callback: v => ['Crash', 'Low', 'OK', 'Good'][v] || ''
-          }
-        }
-      }
-    }
+    data: { labels: r.map(function(e){return fmtDate(e.date);}), datasets: [
+      { label: 'Ráno', data: r.map(function(e){return em[e.energyMorning] !== undefined ? em[e.energyMorning] : null;}), backgroundColor: 'rgba(108,140,255,0.6)' },
+      { label: 'Odpoledne', data: r.map(function(e){return em[e.energyAfternoon] !== undefined ? em[e.energyAfternoon] : null;}), backgroundColor: 'rgba(78,203,113,0.6)' },
+      { label: 'Večer', data: r.map(function(e){return em[e.energyEvening] !== undefined ? em[e.energyEvening] : null;}), backgroundColor: 'rgba(168,139,250,0.6)' }
+    ]},
+    options: opts
   });
 }
 
-function renderDoseComparison() {
-  const container = document.getElementById('doseComparison');
-  const ctx = document.getElementById('doseChart');
+function renderDose() {
+  var ctr = document.getElementById('doseCards');
+  var ctx = document.getElementById('chartDose');
   if (charts.dose) charts.dose.destroy();
-
-  const doses = [...new Set(entries.map(e => e.dose))].filter(d => d > 0).sort((a, b) => a - b);
-
-  if (doses.length < 1) {
-    container.innerHTML = '<div class="no-data">Zatím jen jedna dávka</div>';
-    return;
+  var doseSet = {};
+  for (var i = 0; i < entries.length; i++) { if (entries[i].dose > 0) doseSet[entries[i].dose] = true; }
+  var doses = Object.keys(doseSet).map(Number).sort(function(a,b){return a-b;});
+  if (doses.length < 1) { ctr.innerHTML = '<div class="no-data">Zatím jen jedna dávka</div>'; return; }
+  var ms = ['initiation','focus','emotionalReactivity'];
+  var ml = { initiation: 'Iniciace', focus: 'Focus', emotionalReactivity: 'Emo. reaktivita' };
+  var cardsHtml = '';
+  for (var di = 0; di < doses.length; di++) {
+    var dose = doses[di];
+    var de = entries.filter(function(e){return e.dose === dose;});
+    var sum = 0;
+    for (var mi = 0; mi < ms.length; mi++) {
+      var vals = de.map(function(e){return e[ms[mi]];}).filter(function(v){return v != null;});
+      sum += vals.length ? vals.reduce(function(a,b){return a+b;},0)/vals.length : 0;
+    }
+    var avg = sum / ms.length;
+    cardsHtml += '<div class="dose-card"><div class="dl">' + dose + 'mg</div><div class="dv">' + avg.toFixed(1) + '</div><div class="ds">Ø skóre (' + de.length + ' dní)</div></div>';
   }
-
-  const metrics = ['initiation', 'focus', 'emotionalReactivity'];
-  const metricLabels = { initiation: 'Iniciace', focus: 'Focus', emotionalReactivity: 'Emo. reaktivita' };
-
-  // Cards
-  container.innerHTML = doses.map(dose => {
-    const doseEntries = entries.filter(e => e.dose === dose);
-    const avg = metrics.reduce((sum, m) => {
-      const vals = doseEntries.map(e => e[m]).filter(v => v != null);
-      return sum + (vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0);
-    }, 0) / metrics.length;
-
-    return `<div class="dose-card">
-      <div class="dose-label">${dose}mg</div>
-      <div class="dose-value">${avg.toFixed(1)}</div>
-      <div class="dose-sub">Ø skóre (${doseEntries.length} dní)</div>
-    </div>`;
-  }).join('');
-
-  // Grouped bar chart
-  const colors = ['rgba(108,140,255,0.7)', 'rgba(78,203,113,0.7)', 'rgba(240,160,48,0.7)'];
-
-  const datasets = metrics.map((m, i) => ({
-    label: metricLabels[m],
-    data: doses.map(dose => {
-      const vals = entries.filter(e => e.dose === dose).map(e => e[m]).filter(v => v != null);
-      return vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length) : null;
-    }),
-    backgroundColor: colors[i]
-  }));
-
+  ctr.innerHTML = cardsHtml;
+  var cls = ['rgba(108,140,255,0.7)','rgba(78,203,113,0.7)','rgba(240,160,48,0.7)'];
+  var datasets = [];
+  for (var mi = 0; mi < ms.length; mi++) {
+    var m = ms[mi];
+    var data = [];
+    for (var di = 0; di < doses.length; di++) {
+      var v = entries.filter(function(e){return e.dose===doses[di];}).map(function(e){return e[m];}).filter(function(v){return v!=null;});
+      data.push(v.length ? v.reduce(function(a,b){return a+b;},0)/v.length : null);
+    }
+    datasets.push({ label: ml[m], data: data, backgroundColor: cls[mi] });
+  }
   charts.dose = new Chart(ctx, {
     type: 'bar',
-    data: {
-      labels: doses.map(d => `${d}mg`),
-      datasets
-    },
-    options: chartOptions(0, 5)
+    data: { labels: doses.map(function(d){return d+'mg';}), datasets: datasets },
+    options: co(0, 5)
   });
 }
 
-function renderCorrelation() {
-  const container = document.getElementById('corrMatrix');
-  const metrics = ['initiation', 'focus', 'emotionalReactivity', 'dose', 'heartRate'];
-  const labels = ['Init', 'Focus', 'Emo', 'Dávka', 'Tep'];
-
-  const data = metrics.map(m => entries.map(e => e[m]).filter(v => v != null));
-
-  // Only render if we have enough data
-  if (data.some(d => d.length < 3)) {
-    container.innerHTML = '<div class="no-data">Potřeba víc dat pro korelace</div>';
-    return;
+function renderCorr() {
+  var ctr = document.getElementById('corrMatrix');
+  var ms = ['initiation','focus','emotionalReactivity','dose','heartRate'];
+  var lb = ['Init','Focus','Emo','Dávka','Tep'];
+  var hasEnough = true;
+  for (var i = 0; i < ms.length; i++) {
+    var cnt = 0;
+    for (var j = 0; j < entries.length; j++) { if (entries[j][ms[i]] != null) cnt++; }
+    if (cnt < 3) { hasEnough = false; break; }
   }
-
-  const n = metrics.length;
-  const size = n + 1;
-
-  let html = `<div class="corr-grid" style="grid-template-columns: 50px repeat(${n}, 1fr);">`;
-  // Header row
-  html += `<div></div>`;
-  labels.forEach(l => html += `<div class="corr-label" style="justify-content:center;">${l}</div>`);
-
-  for (let i = 0; i < n; i++) {
-    html += `<div class="corr-label">${labels[i]}</div>`;
-    for (let j = 0; j < n; j++) {
-      if (i === j) {
-        html += `<div class="corr-cell" style="background:var(--surface-3); color:var(--text-muted);">1.0</div>`;
-      } else {
-        const r = pearson(
-          entries.map(e => e[metrics[i]]).filter(v => v != null),
-          entries.map(e => e[metrics[j]]).filter(v => v != null)
-        );
-        const color = r > 0.3 ? `rgba(78,203,113,${Math.abs(r)})` :
-                      r < -0.3 ? `rgba(224,85,85,${Math.abs(r)})` :
-                      `rgba(136,136,160,${Math.max(0.1, Math.abs(r))})`;
-        html += `<div class="corr-cell" style="background:${color};">${r.toFixed(1)}</div>`;
+  if (!hasEnough) { ctr.innerHTML = '<div class="no-data">Potřeba víc dat pro korelace</div>'; return; }
+  var n = ms.length;
+  var h = '<div class="corr-grid" style="grid-template-columns:50px repeat(' + n + ',1fr);"><div></div>';
+  for (var i = 0; i < n; i++) h += '<div class="corr-label" style="justify-content:center;">' + lb[i] + '</div>';
+  for (var i = 0; i < n; i++) {
+    h += '<div class="corr-label">' + lb[i] + '</div>';
+    for (var j = 0; j < n; j++) {
+      if (i === j) { h += '<div class="corr-cell" style="background:#22222f;color:#555568;">1.0</div>'; }
+      else {
+        var xi = entries.map(function(e){return e[ms[i]];}).filter(function(v){return v!=null;});
+        var yi = entries.map(function(e){return e[ms[j]];}).filter(function(v){return v!=null;});
+        var r = pearson(xi, yi);
+        var c = r > 0.3 ? 'rgba(78,203,113,' + Math.abs(r) + ')' : r < -0.3 ? 'rgba(224,85,85,' + Math.abs(r) + ')' : 'rgba(136,136,160,' + Math.max(0.1,Math.abs(r)) + ')';
+        h += '<div class="corr-cell" style="background:' + c + ';">' + r.toFixed(1) + '</div>';
       }
     }
   }
-  html += `</div>`;
-  container.innerHTML = html;
+  h += '</div>';
+  ctr.innerHTML = h;
 }
 
-function pearson(x, y) {
-  const n = Math.min(x.length, y.length);
-  if (n < 3) return 0;
-  const ax = x.slice(0, n), ay = y.slice(0, n);
-  const mx = ax.reduce((a, b) => a + b) / n;
-  const my = ay.reduce((a, b) => a + b) / n;
-  let num = 0, dx = 0, dy = 0;
-  for (let i = 0; i < n; i++) {
-    const xi = ax[i] - mx, yi = ay[i] - my;
-    num += xi * yi;
-    dx += xi * xi;
-    dy += yi * yi;
-  }
-  const denom = Math.sqrt(dx * dy);
-  return denom === 0 ? 0 : num / denom;
+/* ═══════════ CHART HELPERS ═══════════ */
+function mkds(label, data, color) {
+  return { label: label, data: data, borderColor: color, backgroundColor: color + '18', tension: 0.3, fill: false, pointRadius: 3 };
 }
 
-function chartOptions(min, max) {
+function co(min, max) {
   return {
-    responsive: true,
-    maintainAspectRatio: false,
+    responsive: true, maintainAspectRatio: false,
     interaction: { mode: 'index', intersect: false },
-    plugins: {
-      legend: {
-        position: 'bottom',
-        labels: { color: '#8888a0', font: { family: 'DM Sans', size: 11 }, boxWidth: 12, padding: 12 }
-      }
-    },
+    plugins: { legend: { position: 'bottom', labels: { color: '#8888a0', font: { family: 'DM Sans', size: 11 }, boxWidth: 12, padding: 12 }}},
     scales: {
-      x: {
-        ticks: { color: '#555568', font: { family: 'DM Sans', size: 10 } },
-        grid: { color: 'rgba(42,42,58,0.5)' }
-      },
-      y: {
-        min, max,
-        ticks: { color: '#555568', font: { family: 'JetBrains Mono', size: 10 }, stepSize: 1 },
-        grid: { color: 'rgba(42,42,58,0.5)' }
-      }
+      x: { ticks: { color: '#555568', font: { family: 'DM Sans', size: 10 }}, grid: { color: 'rgba(42,42,58,0.5)' }},
+      y: { min: min, max: max, ticks: { color: '#555568', font: { family: 'JetBrains Mono', size: 10 }, stepSize: 1 }, grid: { color: 'rgba(42,42,58,0.5)' }}
     }
   };
 }
 
-// =================== EXPORT / IMPORT ===================
+function pearson(x, y) {
+  var n = Math.min(x.length, y.length);
+  if (n < 3) return 0;
+  var ax = x.slice(0,n), ay = y.slice(0,n);
+  var mx = 0, my = 0;
+  for (var i = 0; i < n; i++) { mx += ax[i]; my += ay[i]; }
+  mx /= n; my /= n;
+  var num = 0, dx = 0, dy = 0;
+  for (var i = 0; i < n; i++) {
+    var xi = ax[i] - mx, yi = ay[i] - my;
+    num += xi * yi; dx += xi * xi; dy += yi * yi;
+  }
+  var d = Math.sqrt(dx * dy);
+  return d === 0 ? 0 : num / d;
+}
+
+function fmtDate(s) {
+  var d = new Date(s + 'T12:00:00');
+  return d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric' });
+}
+
+/* ═══════════ EXPORT / IMPORT ═══════════ */
 function exportJSON() {
-  const blob = new Blob([JSON.stringify(entries, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `concerta-data-${getDateKey(new Date())}.json`;
+  var b = new Blob([JSON.stringify(entries, null, 2)], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(b);
+  a.download = 'concerta-' + dateKey(new Date()) + '.json';
   a.click();
 }
 
 function importJSON() {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.json';
-  input.onchange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const text = await file.text();
+  var inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = '.json';
+  inp.onchange = async function(ev) {
+    var f = ev.target.files[0];
+    if (!f) return;
     try {
-      const imported = JSON.parse(text);
-      if (Array.isArray(imported)) {
-        // Merge
-        const merged = {};
-        entries.forEach(e => merged[e.date] = e);
-        imported.forEach(e => merged[e.date] = e);
-        entries = Object.values(merged).sort((a, b) => a.date.localeCompare(b.date));
-        saveLocal();
-        saveToGist();
-        showToast(`Importováno ${imported.length} záznamů`);
+      var imp = JSON.parse(await f.text());
+      if (Array.isArray(imp)) {
+        var m = {};
+        for (var i = 0; i < entries.length; i++) m[entries[i].date] = entries[i];
+        for (var i = 0; i < imp.length; i++) m[imp[i].date] = imp[i];
+        entries = Object.values(m).sort(function(a,b){return a.date.localeCompare(b.date);});
+        saveLocal(); saveToGist();
+        toast('Import: ' + imp.length + ' záznamů');
       }
-    } catch (err) {
-      showToast('Chyba importu');
-    }
+    } catch(e) { toast('Chyba importu'); }
   };
-  input.click();
+  inp.click();
 }
 
 function clearData() {
   if (!confirm('Opravdu smazat všechna data?')) return;
   if (!confirm('Fakt úplně všechno?')) return;
   entries = [];
-  saveLocal();
-  saveToGist();
-  checkTodayEntry();
-  showToast('Data smazána');
+  saveLocal(); saveToGist(); checkExists();
+  toast('Data smazána');
 }
 
-// =================== UTILS ===================
-function showToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2000);
+/* ═══════════ UTILS ═══════════ */
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2000);
 }
-
-// Init
-init();
 </script>
 
 </body>
