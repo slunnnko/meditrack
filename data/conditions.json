@@ -1,0 +1,226 @@
+[
+  {
+    "id": "adhd",
+    "name": { "cs": "ADHD", "en": "ADHD" },
+    "description": { "cs": "Porucha pozornosti s hyperaktivitou", "en": "Attention deficit hyperactivity disorder" },
+    "wikiTitle": { "cs": "ADHD", "en": "Attention_deficit_hyperactivity_disorder" },
+    "categories": ["stimulant"],
+    "drugIds": ["concerta", "ritalin", "medikinet", "livizux", "elvanse", "vyvanse", "strattera", "adderall", "modafinil"]
+  },
+  {
+    "id": "depression",
+    "name": { "cs": "Deprese", "en": "Depression" },
+    "description": { "cs": "Depresivní porucha", "en": "Major depressive disorder" },
+    "wikiTitle": { "cs": "Deprese_(psychologie)", "en": "Major_depressive_disorder" },
+    "categories": ["ssri", "snri"],
+    "drugIds": ["sertraline", "zoloft", "escitalopram", "cipralex", "fluoxetine", "prozac", "citalopram", "paroxetine", "venlafaxine", "effexor", "duloxetine", "cymbalta", "mirtazapine", "bupropion", "wellbutrin", "trazodone"]
+  },
+  {
+    "id": "anxiety",
+    "name": { "cs": "Úzkostná porucha", "en": "Anxiety disorder" },
+    "description": { "cs": "Generalizovaná úzkostná porucha", "en": "Generalized anxiety disorder" },
+    "wikiTitle": { "cs": "Úzkostná_porucha", "en": "Anxiety_disorder" },
+    "categories": ["ssri", "snri", "benzodiazepine"],
+    "drugIds": ["escitalopram", "cipralex", "sertraline", "zoloft", "paroxetine", "venlafaxine", "effexor", "duloxetine", "cymbalta", "pregabalin", "lyrica", "diazepam", "alprazolam", "bromazepam"]
+  },
+  {
+    "id": "bipolar",
+    "name": { "cs": "Bipolární porucha", "en": "Bipolar disorder" },
+    "description": { "cs": "Bipolární afektivní porucha", "en": "Bipolar disorder" },
+    "wikiTitle": { "cs": "Bipolární_afektivní_porucha", "en": "Bipolar_disorder" },
+    "categories": ["anticonvulsant", "antipsychotic"],
+    "drugIds": ["lithium", "valproate", "lamotrigine", "carbamazepine", "quetiapine", "seroquel", "olanzapine", "aripiprazole"]
+  },
+  {
+    "id": "schizophrenia",
+    "name": { "cs": "Schizofrenie", "en": "Schizophrenia" },
+    "description": { "cs": "Schizofrenie", "en": "Schizophrenia" },
+    "wikiTitle": { "cs": "Schizofrenie", "en": "Schizophrenia" },
+    "categories": ["antipsychotic"],
+    "drugIds": ["quetiapine", "seroquel", "olanzapine", "risperidone", "aripiprazole", "haloperidol"]
+  },
+  {
+    "id": "insomnia",
+    "name": { "cs": "Nespavost", "en": "Insomnia" },
+    "description": { "cs": "Porucha spánku", "en": "Insomnia" },
+    "wikiTitle": { "cs": "Nespavost", "en": "Insomnia" },
+    "categories": ["benzodiazepine"],
+    "drugIds": ["zolpidem", "diazepam", "trazodone", "quetiapine", "mirtazapine"]
+  },
+  {
+    "id": "epilepsy",
+    "name": { "cs": "Epilepsie", "en": "Epilepsy" },
+    "description": { "cs": "Epilepsie", "en": "Epilepsy" },
+    "wikiTitle": { "cs": "Epilepsie", "en": "Epilepsy" },
+    "categories": ["anticonvulsant"],
+    "drugIds": ["valproate", "lamotrigine", "carbamazepine", "topiramate", "pregabalin", "lyrica", "gabapentin", "clonazepam"]
+  },
+  {
+    "id": "diabetes-t2",
+    "name": { "cs": "Diabetes mellitus 2. typu", "en": "Type 2 diabetes" },
+    "description": { "cs": "Cukrovka 2. typu", "en": "Type 2 diabetes mellitus" },
+    "wikiTitle": { "cs": "Diabetes_mellitus_2._typu", "en": "Type_2_diabetes" },
+    "categories": ["diabetes"],
+    "drugIds": ["metformin", "glimepiride", "gliclazide", "sitagliptin", "empagliflozin", "dapagliflozin", "semaglutide", "liraglutide", "insulin-glargine"]
+  },
+  {
+    "id": "diabetes-t1",
+    "name": { "cs": "Diabetes mellitus 1. typu", "en": "Type 1 diabetes" },
+    "description": { "cs": "Cukrovka 1. typu", "en": "Type 1 diabetes mellitus" },
+    "wikiTitle": { "cs": "Diabetes_mellitus_1._typu", "en": "Type_1_diabetes" },
+    "categories": ["diabetes"],
+    "drugIds": ["insulin-glargine"]
+  },
+  {
+    "id": "hypertension",
+    "name": { "cs": "Hypertenze", "en": "Hypertension" },
+    "description": { "cs": "Vysoký krevní tlak", "en": "High blood pressure" },
+    "wikiTitle": { "cs": "Hypertenze", "en": "Hypertension" },
+    "categories": ["antihypertensive"],
+    "drugIds": ["amlodipine", "ramipril", "losartan", "bisoprolol", "metoprolol", "perindopril", "valsartan"]
+  },
+  {
+    "id": "hyperlipidemia",
+    "name": { "cs": "Hyperlipidémie", "en": "Hyperlipidemia" },
+    "description": { "cs": "Vysoký cholesterol", "en": "High cholesterol" },
+    "wikiTitle": { "cs": "Hyperlipidémie", "en": "Hyperlipidemia" },
+    "categories": ["statin"],
+    "drugIds": ["atorvastatin", "rosuvastatin", "simvastatin"]
+  },
+  {
+    "id": "hypothyroidism",
+    "name": { "cs": "Hypotyreóza", "en": "Hypothyroidism" },
+    "description": { "cs": "Snížená funkce štítné žlázy", "en": "Underactive thyroid" },
+    "wikiTitle": { "cs": "Hypotyreóza", "en": "Hypothyroidism" },
+    "categories": ["thyroid"],
+    "drugIds": ["levothyroxine", "euthyrox"]
+  },
+  {
+    "id": "asthma",
+    "name": { "cs": "Astma", "en": "Asthma" },
+    "description": { "cs": "Průduškové astma", "en": "Bronchial asthma" },
+    "wikiTitle": { "cs": "Astma", "en": "Asthma" },
+    "categories": ["asthma"],
+    "drugIds": ["salbutamol", "budesonide-inh", "fluticasone", "montelukast", "tiotropium"]
+  },
+  {
+    "id": "copd",
+    "name": { "cs": "CHOPN", "en": "COPD" },
+    "description": { "cs": "Chronická obstrukční plicní nemoc", "en": "Chronic obstructive pulmonary disease" },
+    "wikiTitle": { "cs": "Chronická_obstrukční_plicní_nemoc", "en": "Chronic_obstructive_pulmonary_disease" },
+    "categories": ["asthma"],
+    "drugIds": ["tiotropium", "budesonide-inh", "fluticasone", "salbutamol"]
+  },
+  {
+    "id": "rheumatoid-arthritis",
+    "name": { "cs": "Revmatoidní artritida", "en": "Rheumatoid arthritis" },
+    "description": { "cs": "Revmatoidní artritida", "en": "Rheumatoid arthritis" },
+    "wikiTitle": { "cs": "Revmatoidní_artritida", "en": "Rheumatoid_arthritis" },
+    "categories": ["autoimmune", "corticosteroid"],
+    "drugIds": ["methotrexate", "adalimumab", "etanercept", "sulfasalazine", "hydroxychloroquine", "leflunomide", "prednisone", "prednisolone"]
+  },
+  {
+    "id": "psoriasis",
+    "name": { "cs": "Psoriáza", "en": "Psoriasis" },
+    "description": { "cs": "Lupénka", "en": "Psoriasis" },
+    "wikiTitle": { "cs": "Lupénka", "en": "Psoriasis" },
+    "categories": ["autoimmune", "dermatological"],
+    "drugIds": ["methotrexate", "adalimumab", "secukinumab", "isotretinoin"]
+  },
+  {
+    "id": "crohns",
+    "name": { "cs": "Crohnova nemoc", "en": "Crohn's disease" },
+    "description": { "cs": "Crohnova choroba", "en": "Crohn's disease" },
+    "wikiTitle": { "cs": "Crohnova_nemoc", "en": "Crohn%27s_disease" },
+    "categories": ["autoimmune", "gastrointestinal", "corticosteroid"],
+    "drugIds": ["mesalazine", "azathioprine", "adalimumab", "budesonide-oral", "prednisone", "methotrexate"]
+  },
+  {
+    "id": "ulcerative-colitis",
+    "name": { "cs": "Ulcerózní kolitida", "en": "Ulcerative colitis" },
+    "description": { "cs": "Ulcerózní kolitida", "en": "Ulcerative colitis" },
+    "wikiTitle": { "cs": "Ulcerózní_kolitida", "en": "Ulcerative_colitis" },
+    "categories": ["autoimmune", "gastrointestinal"],
+    "drugIds": ["mesalazine", "sulfasalazine", "azathioprine", "adalimumab", "prednisone"]
+  },
+  {
+    "id": "gerd",
+    "name": { "cs": "Reflux (GERD)", "en": "GERD" },
+    "description": { "cs": "Gastroezofageální refluxní nemoc", "en": "Gastroesophageal reflux disease" },
+    "wikiTitle": { "cs": "Gastroezofageální_reflux", "en": "Gastroesophageal_reflux_disease" },
+    "categories": ["gastrointestinal"],
+    "drugIds": ["omeprazole", "pantoprazole", "esomeprazole", "lansoprazole"]
+  },
+  {
+    "id": "atrial-fibrillation",
+    "name": { "cs": "Fibrilace síní", "en": "Atrial fibrillation" },
+    "description": { "cs": "Fibrilace síní", "en": "Atrial fibrillation" },
+    "wikiTitle": { "cs": "Fibrilace_síní", "en": "Atrial_fibrillation" },
+    "categories": ["anticoagulant", "antihypertensive"],
+    "drugIds": ["rivaroxaban", "apixaban", "dabigatran", "warfarin", "bisoprolol", "metoprolol"]
+  },
+  {
+    "id": "dvt-pe",
+    "name": { "cs": "Trombóza / Embolie", "en": "DVT / PE" },
+    "description": { "cs": "Hluboká žilní trombóza / plicní embolie", "en": "Deep vein thrombosis / Pulmonary embolism" },
+    "wikiTitle": { "cs": "Hluboká_žilní_trombóza", "en": "Deep_vein_thrombosis" },
+    "categories": ["anticoagulant"],
+    "drugIds": ["rivaroxaban", "apixaban", "dabigatran", "warfarin"]
+  },
+  {
+    "id": "migraine",
+    "name": { "cs": "Migréna", "en": "Migraine" },
+    "description": { "cs": "Migréna", "en": "Migraine" },
+    "wikiTitle": { "cs": "Migréna", "en": "Migraine" },
+    "categories": ["migraine"],
+    "drugIds": ["sumatriptan", "topiramate-mig", "propranolol", "erenumab"]
+  },
+  {
+    "id": "osteoporosis",
+    "name": { "cs": "Osteoporóza", "en": "Osteoporosis" },
+    "description": { "cs": "Řídnutí kostí", "en": "Osteoporosis" },
+    "wikiTitle": { "cs": "Osteoporóza", "en": "Osteoporosis" },
+    "categories": ["osteoporosis"],
+    "drugIds": ["alendronate", "risedronate", "denosumab"]
+  },
+  {
+    "id": "chronic-pain",
+    "name": { "cs": "Chronická bolest", "en": "Chronic pain" },
+    "description": { "cs": "Chronická bolest", "en": "Chronic pain" },
+    "wikiTitle": { "cs": "Chronická_bolest", "en": "Chronic_pain" },
+    "categories": ["painManagement", "anticonvulsant"],
+    "drugIds": ["ibuprofen", "diclofenac", "naproxen", "tramadol", "codeine", "pregabalin", "lyrica", "gabapentin"]
+  },
+  {
+    "id": "neuropathic-pain",
+    "name": { "cs": "Neuropatická bolest", "en": "Neuropathic pain" },
+    "description": { "cs": "Nervová bolest", "en": "Nerve pain" },
+    "wikiTitle": { "cs": "Neuropatická_bolest", "en": "Neuropathic_pain" },
+    "categories": ["anticonvulsant", "snri"],
+    "drugIds": ["pregabalin", "lyrica", "gabapentin", "duloxetine", "cymbalta"]
+  },
+  {
+    "id": "acne",
+    "name": { "cs": "Akné", "en": "Acne" },
+    "description": { "cs": "Akné vulgaris", "en": "Acne vulgaris" },
+    "wikiTitle": { "cs": "Akné", "en": "Acne" },
+    "categories": ["dermatological"],
+    "drugIds": ["isotretinoin"]
+  },
+  {
+    "id": "menopause",
+    "name": { "cs": "Menopauza", "en": "Menopause" },
+    "description": { "cs": "Menopauza / klimakterium", "en": "Menopause" },
+    "wikiTitle": { "cs": "Menopauza", "en": "Menopause" },
+    "categories": ["hormonal"],
+    "drugIds": ["estradiol", "progesterone"]
+  },
+  {
+    "id": "hypogonadism",
+    "name": { "cs": "Hypogonadismus", "en": "Hypogonadism" },
+    "description": { "cs": "Snížená funkce pohlavních žláz", "en": "Low testosterone / hormone deficiency" },
+    "wikiTitle": { "cs": "Hypogonadismus", "en": "Hypogonadism" },
+    "categories": ["hormonal"],
+    "drugIds": ["testosterone"]
+  }
+]
