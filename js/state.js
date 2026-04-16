@@ -1,0 +1,46 @@
+// ── State — central state management ──
+
+const listeners = [];
+
+export const state = {
+  entries: [],
+  healthData: {},
+  settings: {
+    gist: { token: '', id: '' },
+    lang: 'cs',
+    activeDrug: null,  // { id, name, category, dosesPerDay, doseStep, doseCommon }
+    mode: 'advanced',  // 'basic' | 'advanced'
+  },
+  ui: {
+    modalDate: null,
+    activeSection: 'log',
+    charts: {},
+  }
+};
+
+export function subscribe(listener) {
+  listeners.push(listener);
+  return () => {
+    const idx = listeners.indexOf(listener);
+    if (idx >= 0) listeners.splice(idx, 1);
+  };
+}
+
+export function notify(event) {
+  for (const fn of listeners) {
+    try { fn(event); } catch (e) { console.error('State listener error:', e); }
+  }
+}
+
+export function getEntriesForDrug(drugId) {
+  if (!drugId) return state.entries;
+  return state.entries.filter(e => e.drugId === drugId);
+}
+
+export function getEntryByDate(date, drugId) {
+  return state.entries.find(e => e.date === date && (!drugId || e.drugId === drugId));
+}
+
+export function entryKey(entry) {
+  return entry.date + ':' + (entry.drugId || '');
+}

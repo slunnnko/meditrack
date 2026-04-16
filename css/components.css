@@ -1,0 +1,292 @@
+/* ── Icon Button ── */
+.icon-btn {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-card);
+  color: var(--text-secondary);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s; font-size: 16px;
+}
+.icon-btn:active { border-color: var(--accent); color: var(--accent); }
+
+/* ── Scale Buttons (1-5) ── */
+.scale { display: flex; gap: 6px; }
+
+.scale-btn {
+  flex: 1; height: 42px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-input);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.scale-btn.s1 { border-color: var(--danger) !important; color: var(--danger) !important; background-color: rgba(224,85,85,0.12) !important; }
+.scale-btn.s2 { border-color: var(--warning) !important; color: var(--warning) !important; background-color: rgba(240,160,48,0.12) !important; }
+.scale-btn.s3 { border-color: var(--text-secondary) !important; color: var(--text-secondary) !important; background-color: rgba(136,136,160,0.12) !important; }
+.scale-btn.s4 { border-color: var(--accent) !important; color: var(--accent) !important; background-color: rgba(108,140,255,0.12) !important; }
+.scale-btn.s5 { border-color: var(--success) !important; color: var(--success) !important; background-color: rgba(78,203,113,0.12) !important; }
+
+/* ── Toggle Buttons ── */
+.toggle-group { display: flex; gap: 6px; }
+
+.toggle-btn {
+  flex: 1; height: 42px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-input);
+  color: var(--text-secondary);
+  font-family: inherit; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.toggle-btn.sel {
+  border-color: var(--accent) !important;
+  background-color: rgba(108,140,255,0.15) !important;
+  color: var(--accent) !important;
+}
+
+/* ── Energy Options ── */
+.energy-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.energy-block > label { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; display: block; }
+.energy-select { display: flex; flex-direction: column; gap: 4px; }
+
+.energy-option {
+  padding: 6px 8px; border-radius: 6px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-input);
+  color: var(--text-secondary);
+  font-size: 11px; font-weight: 500;
+  cursor: pointer; text-align: center;
+  transition: all 0.15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.energy-option.sel {
+  border-color: var(--accent) !important;
+  background-color: rgba(108,140,255,0.15) !important;
+  color: var(--accent) !important;
+}
+
+/* ── Form Card ── */
+.form-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 12px;
+}
+
+.form-card-title {
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--text-dim); margin-bottom: 16px;
+}
+
+/* ── Submit Button ── */
+.submit-btn {
+  width: 100%; padding: 14px;
+  border: none; border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), #8b6cf0);
+  color: #fff; font-family: inherit;
+  font-size: 15px; font-weight: 600;
+  cursor: pointer; margin-top: 16px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(108,140,255,0.25);
+  -webkit-appearance: none;
+}
+.submit-btn:active { transform: scale(0.98); }
+
+/* ── Pills ── */
+.pill {
+  font-size: 11px; padding: 3px 8px;
+  border-radius: 20px; font-weight: 500;
+  font-family: var(--font-mono);
+}
+.pill-dose { background-color: rgba(108,140,255,0.15); color: var(--accent); }
+.pill-good { background-color: rgba(78,203,113,0.15); color: var(--success); }
+.pill-mid  { background-color: rgba(136,136,160,0.15); color: var(--text-secondary); }
+.pill-bad  { background-color: rgba(224,85,85,0.15); color: var(--danger); }
+.pill-purple { background-color: rgba(168,139,250,0.15); color: var(--accent-purple); }
+
+/* ── History Item ── */
+.history-item {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+}
+.history-top {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 6px;
+}
+.history-date { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.history-edit {
+  font-size: 11px; color: var(--accent);
+  background: none; border: 1px solid var(--accent);
+  border-radius: 6px; padding: 3px 10px;
+  cursor: pointer; font-family: inherit; font-weight: 500;
+  -webkit-appearance: none;
+}
+.history-pills { display: flex; gap: 6px; flex-wrap: wrap; cursor: pointer; }
+
+/* ── Chart Container ── */
+.chart-container {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px; margin-bottom: 12px;
+}
+.chart-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; }
+.chart-wrap { position: relative; height: 200px; }
+
+.dose-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.dose-card { background-color: var(--bg-input); border-radius: 8px; padding: 12px; text-align: center; }
+.dose-card .dl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.dose-card .dv { font-family: var(--font-mono); font-size: 24px; font-weight: 700; color: var(--accent); }
+.dose-card .ds { font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
+
+/* ── Correlation Matrix ── */
+.corr-grid { display: grid; gap: 2px; font-size: 10px; }
+.corr-cell {
+  display: flex; align-items: center; justify-content: center;
+  aspect-ratio: 1; border-radius: 4px;
+  font-family: var(--font-mono); font-weight: 500;
+}
+.corr-label {
+  display: flex; align-items: center;
+  font-size: 10px; color: var(--text-secondary);
+  padding: 2px 4px; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* ── Settings ── */
+.settings-section {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px; margin-bottom: 12px;
+}
+.settings-section h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; }
+.settings-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.settings-row > label { font-size: 13px; color: var(--text-secondary); width: 70px; flex-shrink: 0; }
+
+.btn-s {
+  padding: 10px 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  font-family: inherit; font-size: 13px; font-weight: 500;
+  cursor: pointer; -webkit-appearance: none;
+}
+.btn-s:active { border-color: var(--accent); color: var(--accent); }
+
+.btn-d {
+  padding: 10px 20px;
+  border: 1px solid var(--danger);
+  border-radius: 8px;
+  background-color: rgba(224,85,85,0.1);
+  color: var(--danger);
+  font-family: inherit; font-size: 13px; font-weight: 500;
+  cursor: pointer; -webkit-appearance: none;
+}
+
+/* ── Toast ── */
+.toast {
+  position: fixed; bottom: 80px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background-color: var(--success); color: var(--bg-primary);
+  padding: 12px 24px; border-radius: 12px;
+  font-size: 14px; font-weight: 600;
+  opacity: 0; transition: all 0.3s;
+  z-index: 100; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── Empty State ── */
+.empty-state { text-align: center; padding: 40px 20px; color: var(--text-dim); }
+.empty-state .ei { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+.empty-state p { font-size: 14px; line-height: 1.6; }
+
+.no-data { padding: 20px; text-align: center; color: var(--text-dim); font-size: 13px; }
+.status-bar { font-size: 12px; color: var(--text-dim); padding: 8px 0; text-align: center; }
+.status-bar.ok { color: var(--success); }
+.status-bar.err { color: var(--danger); }
+
+/* ── Drug Search ── */
+.drug-search-wrap { position: relative; }
+.drug-search-results {
+  position: absolute; top: 100%; left: 0; right: 0;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 0 0 8px 8px;
+  max-height: 240px; overflow-y: auto;
+  z-index: 50; display: none;
+}
+.drug-search-results.show { display: block; }
+.drug-result {
+  padding: 10px 12px; cursor: pointer;
+  font-size: 13px; color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.15s;
+}
+.drug-result:hover, .drug-result:focus { background-color: var(--bg-input); }
+.drug-result .drug-sub { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+
+/* ── Dose Row (multi-dose) ── */
+.dose-rows { display: flex; flex-direction: column; gap: 8px; }
+.dose-row-item {
+  display: flex; gap: 8px; align-items: center;
+}
+.dose-row-label {
+  font-size: 11px; color: var(--text-dim);
+  min-width: 50px; font-weight: 600;
+}
+
+/* ── Mode Toggle ── */
+.mode-toggle {
+  display: flex; gap: 6px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 12px;
+}
+.mode-btn {
+  flex: 1; padding: 8px;
+  border: none; background-color: transparent;
+  color: var(--text-secondary); font-family: inherit;
+  font-size: 12px; font-weight: 500;
+  border-radius: 8px; cursor: pointer;
+  transition: all 0.2s;
+}
+.mode-btn.active {
+  background-color: var(--accent-purple); color: #fff;
+  box-shadow: 0 2px 12px rgba(167,139,250,0.3);
+}
+
+/* ── Language Toggle ── */
+.lang-toggle {
+  display: flex; gap: 4px;
+}
+.lang-btn {
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: inherit; font-size: 11px; font-weight: 600;
+  cursor: pointer; text-transform: uppercase;
+}
+.lang-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background-color: rgba(108,140,255,0.1);
+}
