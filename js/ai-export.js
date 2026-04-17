@@ -4,6 +4,7 @@ import { state, getEntriesForDrug } from './state.js';
 import { t, getLang } from './i18n.js';
 import { METRICS, getMetricsForProfile, getScaleMetrics } from './drug-profiles.js';
 import { toast } from './ui.js';
+import { getConfig } from './config.js';
 
 /**
  * Generate AI-ready export text.
@@ -27,20 +28,14 @@ export function generateAiExport() {
   const scaleMetrics = getScaleMetrics(drug.category, mode);
   const allMetrics = getMetricsForProfile(drug.category, mode);
 
+  const cfg = getConfig();
   let text = '';
 
-  // ── System context / prompt ──
+  // ── System context / prompt (from config — user editable) ──
   text += `# Medication Tracking Data — AI Consultation Export\n\n`;
   text += `## Instructions for AI assistant\n`;
-  text += `You are analyzing medication tracking data for a patient. The data below contains daily self-reported metrics recorded during a medication trial/adjustment period. Your role is to:\n`;
-  text += `1. Identify trends, patterns, and correlations in the data\n`;
-  text += `2. Note any concerning side effects or worsening symptoms\n`;
-  text += `3. Assess overall medication effectiveness based on the tracked metrics\n`;
-  text += `4. Highlight quality of life impact\n`;
-  text += `5. Suggest questions the patient might want to discuss with their doctor\n`;
-  text += `6. Be factual and evidence-based — do NOT diagnose or recommend medication changes\n`;
-  text += `7. If data shows concerning patterns (e.g., persistent side effects, worsening metrics), flag them clearly\n\n`;
-  text += `**Important**: This is self-reported subjective data. Scale metrics are 1-5 where 1 is worst and 5 is best unless noted otherwise. This export is meant to help the patient discuss their medication with their healthcare provider.\n\n`;
+  text += cfg.ai.prompt + '\n\n';
+  text += `**Important**: ${cfg.ai.disclaimer}\n\n`;
 
   // ── Drug information ──
   text += `## Medication\n`;
@@ -152,24 +147,29 @@ export function generateAiExport() {
     text += notes.join('\n') + '\n\n';
   }
 
-  // ── Raw data (last 14 entries) ──
-  const recent = entries.slice(-14);
-  text += `## Raw data (last ${recent.length} entries)\n`;
-  text += `\`\`\`json\n`;
-  text += JSON.stringify(recent, null, 2);
-  text += `\n\`\`\`\n\n`;
+  // ── Raw data ──
+  if (cfg.ai.includeRawData) {
+    const rawCount = cfg.ai.rawDataEntries || 14;
+    const recent = entries.slice(-rawCount);
+    text += `## Raw data (last ${recent.length} entries)\n`;
+    text += `\`\`\`json\n`;
+    text += JSON.stringify(recent, null, 2);
+    text += `\n\`\`\`\n\n`;
+  }
 
   // ── Health data overlay ──
-  const healthDates = Object.keys(state.healthData).filter(d =>
-    entries.some(e => e.date === d)
-  );
-  if (healthDates.length > 0) {
-    text += `## Imported health device data\n`;
-    text += `\`\`\`json\n`;
-    const relevant = {};
-    for (const d of healthDates) relevant[d] = state.healthData[d];
-    text += JSON.stringify(relevant, null, 2);
-    text += `\n\`\`\`\n`;
+  if (cfg.ai.includeHealthData) {
+    const healthDates = Object.keys(state.healthData).filter(d =>
+      entries.some(e => e.date === d)
+    );
+    if (healthDates.length > 0) {
+      text += `## Imported health device data\n`;
+      text += `\`\`\`json\n`;
+      const relevant = {};
+      for (const d of healthDates) relevant[d] = state.healthData[d];
+      text += JSON.stringify(relevant, null, 2);
+      text += `\n\`\`\`\n`;
+    }
   }
 
   return text;

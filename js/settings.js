@@ -7,6 +7,7 @@ import { saveSettings, saveGistConfig, testGistConnection, exportJSON, importJSO
 import { searchDrugs, createCustomDrug, atcToCategory } from './drug-search.js';
 import { PROFILES } from './drug-profiles.js';
 import { copyAiExport, downloadAiExport } from './ai-export.js';
+import { showConfigEditor } from './config-editor.js';
 
 export function renderSettings(container) {
   const g = state.settings.gist;
@@ -107,6 +108,13 @@ export function renderSettings(container) {
       <button class="btn-s" id="btnAppleHealth">${t('settings.appleHealth')}</button>
       <button class="btn-s" id="btnWithingsCsv">${t('settings.withingsCsv')}</button>
     </div>
+  </div>`;
+
+  // Config editor
+  html += `<div class="settings-section">
+    <h3>${t('settings.config')}</h3>
+    <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">${t('settings.configDesc')}</p>
+    <button class="btn-s" id="btnConfigEditor" style="border-color:var(--accent);color:var(--accent);">${t('settings.configOpen')}</button>
   </div>`;
 
   // Data
@@ -224,6 +232,10 @@ function bindSettingsEvents(container) {
       notify({ type: 'import-withings-csv' });
     });
   }
+
+  // Config editor
+  const configBtn = document.getElementById('btnConfigEditor');
+  if (configBtn) configBtn.addEventListener('click', showConfigEditor);
 
   // AI Export
   const aiCopyBtn = document.getElementById('btnAiCopy');

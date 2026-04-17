@@ -321,6 +321,8 @@ function getShortLabel(id) {
     diarrhea: 'Diar', fatigue: 'Fatig', hotFlashes: 'Flash', moodSwings: 'MdSw',
     waterRetention: 'Water', breastTenderness: 'Brst', migraineIntensity: 'MigI',
     migraineFrequency: 'MigF', bonePain: 'Bone',
+    afternoonDip: 'Dip', dailyFunctioning: 'Func', workPerformance: 'Work',
+    socialLife: 'Social', overallWellbeing: 'Well', lifeSatisfaction: 'Satis',
   };
   return map[id] || id.substring(0, 4);
 }

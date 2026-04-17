@@ -6,6 +6,7 @@ import { toast, dateKey } from './ui.js';
 import { saveEntries } from './storage.js';
 import { saveToGist } from './storage.js';
 import { METRICS, GROUPS, getMetricsForProfile } from './drug-profiles.js';
+import { getConfig } from './config.js';
 
 export function renderForm(container) {
   const drug = state.settings.activeDrug;
@@ -33,12 +34,14 @@ export function renderForm(container) {
   </div>`;
 
   // Dose card
+  const cfg = getConfig();
+  const maxDoses = cfg.dose.maxDosesPerDay || 3;
   html += `<div class="form-card">
     <div class="form-card-title">${t('form.dose')}</div>
     <div class="field">
       <label>${t('form.dosesPerDay')}</label>
       <div class="input-row">
-        <input type="number" id="f-dosesPerDay" value="${dosesPerDay}" min="1" max="6" style="width:60px;">
+        <input type="number" id="f-dosesPerDay" value="${dosesPerDay}" min="1" max="${maxDoses}" style="width:60px;">
         <span class="unit">×</span>
       </div>
     </div>
@@ -96,11 +99,14 @@ export function renderForm(container) {
 }
 
 function renderDoseRows(count, drug) {
+  const cfg = getConfig();
+  const timePresets = cfg.dose.doseTimePresets || ['07:00', '12:00', '18:00'];
+  const allowCustom = cfg.dose.allowCustomDose;
   let html = '';
   for (let i = 0; i < count; i++) {
     const label = count > 1 ? t('form.dose.n', { n: i + 1, total: count }) : t('form.dose.amount');
-    const defaultTime = i === 0 ? '07:00' : (i === 1 ? '14:00' : `${7 + i * 4}:00`.padStart(5, '0'));
-    const step = drug.doseStep || 1;
+    const defaultTime = timePresets[i] || timePresets[0] || '07:00';
+    const step = allowCustom ? 'any' : (drug.doseStep || 1);
     const defaultDose = drug.doseCommon?.[0] || '';
     html += `<div class="dose-row-item">
       <span class="dose-row-label">${label}</span>

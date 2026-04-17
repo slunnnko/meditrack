@@ -181,6 +181,16 @@ export const METRICS = {
     label: 'metric.bonePain',
   },
 
+  // ── Stimulant-specific metrics ──
+  onsetTime: {
+    type: 'time', group: 'perception',
+    label: 'metric.onsetTime',
+  },
+  afternoonDip: {
+    type: 'scale', group: 'metrics',
+    label: 'metric.afternoonDip',
+  },
+
   // ── Toggle metrics ──
   bleeding: {
     type: 'toggle', group: 'body',
@@ -414,6 +424,7 @@ export const PROFILES = {
     basic: ['mood', 'focus', 'energy', 'appetite', 'sleep'],
     advanced: [
       'initiation', 'focus', 'emotionalReactivity', 'memory',
+      'onsetTime', 'afternoonDip',
       'socialPerception', 'fluctuations', 'effectEndTime',
       'hungerNoticed', 'firstMeal', 'heartRate', 'tinnitus', 'rls',
       'energyMorning', 'energyAfternoon', 'energyEvening',
@@ -620,10 +631,38 @@ export const GROUPS = {
 
 /**
  * Get metric list for a given category and mode.
+ * Applies user config overrides and custom metrics via globalThis.__appConfig.
  */
 export function getMetricsForProfile(category, mode) {
   const profile = PROFILES[category] || PROFILES.generic;
-  const metricIds = profile[mode] || profile.basic;
+  let metricIds = [...(profile[mode] || profile.basic)];
+
+  // Apply config overrides (set by config.js via globalThis.__appConfig)
+  const cfg = globalThis.__appConfig;
+  if (cfg) {
+    // Profile overrides
+    const overrides = cfg.profileOverrides?.[category];
+    if (overrides) {
+      if (overrides.removeMetrics) metricIds = metricIds.filter(id => !overrides.removeMetrics.includes(id));
+      if (overrides.addMetrics) {
+        for (const id of overrides.addMetrics) { if (!metricIds.includes(id)) metricIds.push(id); }
+      }
+    }
+
+    // Register custom metrics
+    for (const cm of (cfg.customMetrics || [])) {
+      if (cm.id && cm.type && !METRICS[cm.id]) {
+        METRICS[cm.id] = {
+          type: cm.type,
+          group: cm.group || 'metrics',
+          label: typeof cm.label === 'string' ? cm.label : `metric.${cm.id}`,
+          // Copy extra fields (options, unit, min, max, etc.)
+          ...cm,
+        };
+      }
+    }
+  }
+
   return metricIds.map(id => ({ id, ...METRICS[id] })).filter(m => m.type);
 }
 

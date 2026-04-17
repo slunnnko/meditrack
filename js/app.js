@@ -5,6 +5,7 @@ import { t, setLang, getLang } from './i18n.js';
 import { loadFromLocal, saveEntries, saveSettings, syncFromGist } from './storage.js';
 import { loadCatalog, searchDrugs, createCustomDrug, atcToCategory, searchConditions, getDrugsForCondition, fetchWikiSummary, getConditionById } from './drug-search.js';
 import { PROFILES } from './drug-profiles.js';
+import { loadConfig } from './config.js';
 import { renderForm, checkExists, editEntry, loadFormForDate } from './form.js';
 import { renderHistory } from './history.js';
 import { renderCharts } from './charts.js';
@@ -15,6 +16,7 @@ import { showSection, updateStatus, bindModalClose, toast, dateKey } from './ui.
 // ── Init ──
 async function init() {
   loadFromLocal();
+  loadConfig();
   setLang(state.settings.lang);
   migrateEntries();
 
@@ -169,6 +171,10 @@ function handleEvent(event) {
       hideDrugSelector();
       renderApp();
       showSection('log');
+      break;
+
+    case 'config-change':
+      renderForm(document.getElementById('section-log'));
       break;
 
     case 'import-apple-health':

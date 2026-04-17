@@ -5,6 +5,7 @@ const listeners = [];
 export const state = {
   entries: [],
   healthData: {},
+  config: null,  // loaded from config.js
   settings: {
     gist: { token: '', id: '' },
     lang: 'cs',
