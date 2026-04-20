@@ -1,10 +1,45 @@
 // ── Health Import — Apple Health XML + Withings CSV + Withings API ──
 
-import { state } from './state.js';
+import { state, notify } from './state.js';
 import { t } from './i18n.js';
 import { toast } from './ui.js';
-import { saveHealthData } from './storage.js';
+import { saveHealthData, saveEntries, saveToGist } from './storage.js';
 import { getConfig } from './config.js';
+import { METRICS } from './drug-profiles.js';
+
+/**
+ * Backfill existing entries with device data by date match.
+ * Overwrites auto-fill metrics (heartRate, sleep, steps) from healthData.
+ * Returns count of entries updated.
+ */
+export function backfillEntriesFromHealthData() {
+  let updated = 0;
+  const autoFillMap = {};
+  for (const [id, def] of Object.entries(METRICS)) {
+    if (def.autoFill) autoFillMap[id] = def.autoFill;
+  }
+
+  for (const entry of state.entries) {
+    const hd = state.healthData[entry.date];
+    if (!hd) continue;
+    if (!entry.metrics) entry.metrics = {};
+    let changed = false;
+    for (const [metricId, hdKey] of Object.entries(autoFillMap)) {
+      if (hd[hdKey] != null) {
+        entry.metrics[metricId] = hd[hdKey];
+        changed = true;
+      }
+    }
+    if (changed) updated++;
+  }
+
+  if (updated > 0) {
+    saveEntries();
+    saveToGist();
+    notify({ type: 'entries-changed' });
+  }
+  return updated;
+}
 
 // ── Apple Health XML import ──
 // Uses streaming approach for large files
@@ -46,7 +81,8 @@ export function importAppleHealth() {
         state.healthData[date] = { ...state.healthData[date], ...data };
       }
       saveHealthData();
-      toast(t('toast.healthImported', { n: Object.keys(byDate).length }));
+      const updated = backfillEntriesFromHealthData();
+      toast(t('toast.healthImported', { n: Object.keys(byDate).length }) + (updated ? ` · ${t('toast.backfilled', { n: updated })}` : ''));
     } catch (e) {
       console.error('Apple Health import error:', e);
       toast(t('toast.importError'));
@@ -129,7 +165,8 @@ export function importWithingsCsv() {
         state.healthData[date] = { ...state.healthData[date], ...data };
       }
       saveHealthData();
-      toast(t('toast.healthImported', { n: Object.keys(records).length }));
+      const updated = backfillEntriesFromHealthData();
+      toast(t('toast.healthImported', { n: Object.keys(records).length }) + (updated ? ` · ${t('toast.backfilled', { n: updated })}` : ''));
     } catch (e) {
       console.error('Withings CSV import error:', e);
       toast(t('toast.importError'));
@@ -435,7 +472,8 @@ export async function fetchWithingsData(startDate, endDate) {
     }
 
     saveHealthData();
-    toast(t('toast.healthImported', { n: imported }));
+    const updated = backfillEntriesFromHealthData();
+    toast(t('toast.healthImported', { n: imported }) + (updated ? ` · ${t('toast.backfilled', { n: updated })}` : ''));
   } catch (e) {
     console.error('Withings API error:', e);
     toast(t('toast.importError'));
