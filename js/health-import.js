@@ -246,6 +246,7 @@ function normalizeDate(str) {
 const WITHINGS_AUTH_URL = 'https://account.withings.com/oauth2_user/authorize2';
 const WITHINGS_TOKEN_URL = 'https://wbsapi.withings.net/v2/oauth2';
 const WITHINGS_MEASURE_URL = 'https://wbsapi.withings.net/measure';
+const WITHINGS_ACTIVITY_URL = 'https://wbsapi.withings.net/v2/measure';
 const WITHINGS_SLEEP_URL = 'https://wbsapi.withings.net/v2/sleep';
 const WITHINGS_TOKEN_KEY = 'ct_withings_token';
 
@@ -418,37 +419,85 @@ export async function fetchWithingsData(startDate, endDate) {
   const end = Math.floor(new Date(endDate + 'T23:59:59').getTime() / 1000);
   let imported = 0;
 
+  const errors = [];
+
   try {
-    // Fetch measurements (weight, blood pressure, heart rate)
-    const measRes = await fetch(WITHINGS_MEASURE_URL + '?action=getmeas', {
+    // Fetch measurements (weight, blood pressure, heart rate, SpO2, fat mass, temperature)
+    // meastypes (plural) is required when requesting more than one type.
+    // 1=weight, 5=fatFreeMass, 6=fatRatio, 8=fatMass, 9=diastolic, 10=systolic,
+    // 11=heartRate, 54=spo2, 71=bodyTemp, 73=skinTemp, 76=muscleMass, 88=boneMass
+    const MEASTYPES = '1,5,6,8,9,10,11,54,71,73,76,77,88';
+    const measRes = await fetch(WITHINGS_MEASURE_URL, {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + token,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: `action=getmeas&meastype=1,9,10,11&category=1&startdate=${start}&enddate=${end}`,
+      body: `action=getmeas&meastypes=${MEASTYPES}&category=1&startdate=${start}&enddate=${end}`,
     });
     const measData = await measRes.json();
+    console.log('[Withings] getmeas status:', measData.status, 'groups:', measData.body?.measuregrps?.length ?? 0);
 
-    if (measData.status === 0 && measData.body?.measuregrps) {
+    if (measData.status !== 0) {
+      errors.push('getmeas status=' + measData.status + (measData.error ? ' ' + measData.error : ''));
+    } else if (measData.body?.measuregrps) {
       for (const grp of measData.body.measuregrps) {
         const date = new Date(grp.date * 1000).toISOString().slice(0, 10);
         if (!state.healthData[date]) state.healthData[date] = {};
 
         for (const m of grp.measures) {
           const val = m.value * Math.pow(10, m.unit);
-          // meastype: 1=weight, 9=diastolic, 10=systolic, 11=heartRate
-          if (m.type === 1) state.healthData[date].weight = Math.round(val * 10) / 10;
-          if (m.type === 9) state.healthData[date].diastolic = Math.round(val);
-          if (m.type === 10) state.healthData[date].systolic = Math.round(val);
-          if (m.type === 11) state.healthData[date].heartRate = Math.round(val);
+          switch (m.type) {
+            case 1:  state.healthData[date].weight = Math.round(val * 10) / 10; break;
+            case 5:  state.healthData[date].fatFreeMass = Math.round(val * 10) / 10; break;
+            case 6:  state.healthData[date].fatRatio = Math.round(val * 10) / 10; break;
+            case 8:  state.healthData[date].fatMass = Math.round(val * 10) / 10; break;
+            case 9:  state.healthData[date].diastolic = Math.round(val); break;
+            case 10: state.healthData[date].systolic = Math.round(val); break;
+            case 11: state.healthData[date].heartRate = Math.round(val); break;
+            case 54: state.healthData[date].spo2 = Math.round(val * 100); break;
+            case 71: state.healthData[date].bodyTemp = Math.round(val * 10) / 10; break;
+            case 73: state.healthData[date].skinTemp = Math.round(val * 10) / 10; break;
+            case 76: state.healthData[date].muscleMass = Math.round(val * 10) / 10; break;
+            case 77: state.healthData[date].hydration = Math.round(val * 10) / 10; break;
+            case 88: state.healthData[date].boneMass = Math.round(val * 10) / 10; break;
+          }
           imported++;
         }
       }
     }
 
+    // Fetch activity (steps, distance, calories, resting HR)
+    const actRes = await fetch(WITHINGS_ACTIVITY_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `action=getactivity&startdateymd=${startDate}&enddateymd=${endDate}&data_fields=steps,distance,elevation,calories,totalcalories,hr_average,hr_min,hr_max,active`,
+    });
+    const actData = await actRes.json();
+    console.log('[Withings] getactivity status:', actData.status, 'days:', actData.body?.activities?.length ?? 0);
+
+    if (actData.status !== 0) {
+      errors.push('getactivity status=' + actData.status + (actData.error ? ' ' + actData.error : ''));
+    } else if (actData.body?.activities) {
+      for (const a of actData.body.activities) {
+        const date = a.date;
+        if (!state.healthData[date]) state.healthData[date] = {};
+        if (a.steps != null)        state.healthData[date].steps = a.steps;
+        if (a.distance != null)     state.healthData[date].distance = Math.round(a.distance);
+        if (a.elevation != null)    state.healthData[date].elevation = Math.round(a.elevation);
+        if (a.calories != null)     state.healthData[date].calories = Math.round(a.calories);
+        if (a.totalcalories != null) state.healthData[date].totalCalories = Math.round(a.totalcalories);
+        if (a.hr_average != null)   state.healthData[date].restingHeartRate = Math.round(a.hr_average);
+        if (a.active != null)       state.healthData[date].activeMinutes = Math.round(a.active / 60);
+        imported++;
+      }
+    }
+
     // Fetch sleep summary
-    const sleepRes = await fetch(WITHINGS_SLEEP_URL + '?action=getsummary', {
+    const sleepRes = await fetch(WITHINGS_SLEEP_URL, {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + token,
@@ -457,8 +506,11 @@ export async function fetchWithingsData(startDate, endDate) {
       body: `action=getsummary&startdateymd=${startDate}&enddateymd=${endDate}`,
     });
     const sleepData = await sleepRes.json();
+    console.log('[Withings] getsummary status:', sleepData.status, 'nights:', sleepData.body?.series?.length ?? 0);
 
-    if (sleepData.status === 0 && sleepData.body?.series) {
+    if (sleepData.status !== 0) {
+      errors.push('sleep getsummary status=' + sleepData.status + (sleepData.error ? ' ' + sleepData.error : ''));
+    } else if (sleepData.body?.series) {
       for (const s of sleepData.body.series) {
         const date = s.date;
         if (!state.healthData[date]) state.healthData[date] = {};
@@ -473,10 +525,16 @@ export async function fetchWithingsData(startDate, endDate) {
 
     saveHealthData();
     const updated = backfillEntriesFromHealthData();
-    toast(t('toast.healthImported', { n: imported }) + (updated ? ` · ${t('toast.backfilled', { n: updated })}` : ''));
+
+    if (errors.length) {
+      console.error('[Withings] errors:', errors);
+      toast('Withings: ' + errors.join(' | '));
+    } else {
+      toast(t('toast.healthImported', { n: imported }) + (updated ? ` · ${t('toast.backfilled', { n: updated })}` : ''));
+    }
   } catch (e) {
     console.error('Withings API error:', e);
-    toast(t('toast.importError'));
+    toast(t('toast.importError') + ' — ' + e.message);
   }
 }
 
