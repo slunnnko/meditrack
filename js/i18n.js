@@ -28,6 +28,12 @@ const TRANSLATIONS = {
     'body.title': 'Tělo',
     'energy.title': 'Energie přes den',
     'sleep.title': 'Spánek (minulá noc)',
+    'deviceSleep.title': 'Spánek — data ze zařízení',
+    'deviceActivity.title': 'Aktivita — data ze zařízení',
+    'metric.sleepHours': 'Délka spánku',
+    'metric.sleepScore': 'Skóre spánku',
+    'metric.sleepHrAvg': 'Průměrný tep ve spánku',
+    'metric.steps': 'Kroky',
     'note.title': 'Poznámka',
 
     // Metric labels
@@ -293,6 +299,12 @@ const TRANSLATIONS = {
     'body.title': 'Body',
     'energy.title': 'Energy throughout day',
     'sleep.title': 'Sleep (last night)',
+    'deviceSleep.title': 'Sleep — device data',
+    'deviceActivity.title': 'Activity — device data',
+    'metric.sleepHours': 'Sleep duration',
+    'metric.sleepScore': 'Sleep score',
+    'metric.sleepHrAvg': 'Average sleep heart rate',
+    'metric.steps': 'Steps',
     'note.title': 'Note',
 
     'metric.initiation': 'Initiation — difficulty starting boring tasks',

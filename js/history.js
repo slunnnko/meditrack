@@ -183,6 +183,7 @@ function getShortLabel(metricId) {
     migraineIntensity: 'MigI', migraineFrequency: 'MigF', bonePain: 'Bone',
     afternoonDip: 'Dip', dailyFunctioning: 'Func', workPerformance: 'Work',
     socialLife: 'Social', overallWellbeing: 'Well', lifeSatisfaction: 'Satis',
+    sleepHours: 'Slp', sleepScore: 'SlpS', sleepHrAvg: 'SlpHR', steps: 'Steps',
   };
   return map[metricId] || metricId.substring(0, 4);
 }

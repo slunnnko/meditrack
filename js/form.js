@@ -8,6 +8,36 @@ import { saveToGist } from './storage.js';
 import { METRICS, GROUPS, getMetricsForProfile } from './drug-profiles.js';
 import { getConfig } from './config.js';
 
+/**
+ * Auto-fill form fields from imported health device data (Withings, Apple Health).
+ * Looks up state.healthData[date] and fills matching metric inputs.
+ */
+function autoFillFromHealthData(date) {
+  const hd = state.healthData?.[date];
+  if (!hd) return;
+
+  const drug = state.settings.activeDrug;
+  if (!drug) return;
+
+  const mode = state.settings.mode;
+  const metrics = getMetricsForProfile(drug.category, mode);
+
+  for (const m of metrics) {
+    if (!m.autoFill) continue;
+    const val = hd[m.autoFill];
+    if (val == null) continue;
+
+    const input = document.getElementById('f-' + m.id);
+    if (input) {
+      input.value = val;
+      input.readOnly = true;
+      input.classList.add('auto-filled');
+      const badge = document.getElementById('badge-' + m.id);
+      if (badge) badge.style.display = 'inline';
+    }
+  }
+}
+
 export function renderForm(container) {
   const drug = state.settings.activeDrug;
   if (!drug) {
@@ -155,7 +185,8 @@ function renderMetricField(m) {
     html += `<label>${t(m.label)}</label>
       <input type="time" id="f-${m.id}" value="${m.defaultValue || ''}" style="width:120px;">`;
   } else if (m.type === 'number') {
-    html += `<label>${t(m.label)}</label>
+    const autoTag = m.autoFill ? `<span class="auto-fill-badge" id="badge-${m.id}" style="display:none;">⟵ auto</span>` : '';
+    html += `<label>${t(m.label)} ${autoTag}</label>
       <div class="input-row">
         <input type="number" id="f-${m.id}" min="${m.min || ''}" max="${m.max || ''}" step="${m.step || 1}" placeholder="—">
         <span class="unit">${m.unit || ''}</span>
@@ -222,7 +253,10 @@ function bindFormEvents(container) {
     dateInput.addEventListener('change', () => {
       checkExists();
       loadFormForDate(dateInput.value);
+      autoFillFromHealthData(dateInput.value);
     });
+    // Auto-fill on initial render
+    setTimeout(() => autoFillFromHealthData(dateInput.value), 0);
   }
 
   // Doses per day toggle
@@ -411,6 +445,9 @@ export function loadFormForDate(date) {
   // Load note
   const noteEl = document.getElementById('f-note');
   if (noteEl && entry.note) noteEl.value = entry.note;
+
+  // Auto-fill remaining empty fields from health data
+  autoFillFromHealthData(date);
 }
 
 function resetForm() {

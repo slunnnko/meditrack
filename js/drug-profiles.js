@@ -357,11 +357,38 @@ export const METRICS = {
     type: 'number', group: 'body',
     label: 'metric.heartRate',
     unit: 'bpm', min: 40, max: 200,
+    autoFill: 'heartRate',
   },
   weight: {
     type: 'number', group: 'body',
     label: 'metric.weight',
     unit: 'kg', min: 20, max: 300, step: 0.1,
+  },
+
+  // ── Device data metrics (auto-filled from health imports) ──
+  sleepHours: {
+    type: 'number', group: 'deviceSleep',
+    label: 'metric.sleepHours',
+    unit: 'h', min: 0, max: 24, step: 0.1,
+    autoFill: 'sleepHours',
+  },
+  sleepScore: {
+    type: 'number', group: 'deviceSleep',
+    label: 'metric.sleepScore',
+    unit: '', min: 0, max: 100,
+    autoFill: 'sleepScore',
+  },
+  sleepHrAvg: {
+    type: 'number', group: 'deviceSleep',
+    label: 'metric.sleepHrAvg',
+    unit: 'bpm', min: 30, max: 120,
+    autoFill: 'sleepHrAvg',
+  },
+  steps: {
+    type: 'number', group: 'deviceActivity',
+    label: 'metric.steps',
+    unit: '', min: 0, max: 100000,
+    autoFill: 'steps',
   },
 
   // ── Quality of Life metrics ──
@@ -609,24 +636,29 @@ export const PROFILES = {
   },
 };
 
-// QoL metrics appended to every advanced profile automatically
+// Device data metrics — auto-filled from Withings/Apple Health
+const DEVICE_METRICS = ['sleepHours', 'sleepScore', 'sleepHrAvg', 'steps'];
+
+// QoL metrics
 const QOL_METRICS = ['dailyFunctioning', 'workPerformance', 'socialLife', 'overallWellbeing', 'lifeSatisfaction'];
 
-// Append QoL to all advanced profiles
+// Append device data + QoL to all advanced profiles automatically
 for (const prof of Object.values(PROFILES)) {
   if (prof.advanced) {
-    prof.advanced = [...prof.advanced, ...QOL_METRICS];
+    prof.advanced = [...prof.advanced, ...DEVICE_METRICS, ...QOL_METRICS];
   }
 }
 
 // Groups define form card sections
 export const GROUPS = {
-  metrics:    { title: 'metrics.title', order: 1 },
-  perception: { title: 'perception.title', order: 2 },
-  body:       { title: 'body.title', order: 3 },
-  energy:     { title: 'energy.title', order: 4 },
-  sleep:      { title: 'sleep.title', order: 5 },
-  qol:        { title: 'qol.title', order: 6 },
+  metrics:        { title: 'metrics.title', order: 1 },
+  perception:     { title: 'perception.title', order: 2 },
+  body:           { title: 'body.title', order: 3 },
+  energy:         { title: 'energy.title', order: 4 },
+  sleep:          { title: 'sleep.title', order: 5 },
+  deviceSleep:    { title: 'deviceSleep.title', order: 6 },
+  deviceActivity: { title: 'deviceActivity.title', order: 7 },
+  qol:            { title: 'qol.title', order: 8 },
 };
 
 /**

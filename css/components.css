@@ -272,6 +272,19 @@
   box-shadow: 0 2px 12px rgba(167,139,250,0.3);
 }
 
+/* ── Auto-fill indicator ── */
+.auto-filled {
+  border-color: var(--accent-purple) !important;
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+.auto-fill-badge {
+  font-size: 10px;
+  color: var(--accent-purple);
+  font-weight: 500;
+  margin-left: 6px;
+}
+
 /* ── Language Toggle ── */
 .lang-toggle {
   display: flex; gap: 4px;
