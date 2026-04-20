@@ -265,19 +265,35 @@ export async function handleWithingsCallback() {
 
   try {
     toast(t('withings.exchangingToken'));
-    const res = await fetch(cfg.withings.proxyUrl, {
+    const proxyUrl = cfg.withings.proxyUrl;
+    console.log('[Withings] Token exchange via proxy:', proxyUrl);
+    console.log('[Withings] redirect_uri:', redirectUri);
+    console.log('[Withings] code length:', code?.length);
+
+    const payload = {
+      action: 'requesttoken',
+      grant_type: 'authorization_code',
+      client_id: cfg.withings.clientId,
+      client_secret: cfg.withings.clientSecret,
+      code,
+      redirect_uri: redirectUri,
+    };
+
+    const res = await fetch(proxyUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'requesttoken',
-        grant_type: 'authorization_code',
-        client_id: cfg.withings.clientId,
-        client_secret: cfg.withings.clientSecret,
-        code,
-        redirect_uri: redirectUri,
-      }),
+      body: JSON.stringify(payload),
     });
-    const data = await res.json();
+
+    console.log('[Withings] Proxy response status:', res.status);
+    const text = await res.text();
+    console.log('[Withings] Proxy response body:', text);
+
+    let data;
+    try { data = JSON.parse(text); } catch {
+      toast('Proxy returned invalid JSON — check worker logs');
+      return false;
+    }
 
     if (data.status === 0 && data.body?.access_token) {
       const tokenData = {
@@ -290,12 +306,14 @@ export async function handleWithingsCallback() {
       toast(t('withings.connected'));
       return true;
     } else {
-      toast('Withings token error: ' + (data.error || 'unknown'));
+      const errMsg = data.error || data.message || `status=${data.status}`;
+      console.error('[Withings] Token error:', data);
+      toast('Withings error: ' + errMsg);
       return false;
     }
   } catch (e) {
-    console.error('Withings token exchange error:', e);
-    toast(t('toast.connError'));
+    console.error('[Withings] Token exchange failed:', e);
+    toast(t('toast.connError') + ' — ' + e.message);
     return false;
   }
 }
