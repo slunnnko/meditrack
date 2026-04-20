@@ -3,7 +3,12 @@
 import { state, notify } from './state.js';
 import { t, setLang, getLang, getAvailableLangs } from './i18n.js';
 import { toast, updateStatus } from './ui.js';
-import { saveSettings, saveGistConfig, testGistConnection, exportJSON, importJSON, saveEntries, saveToGist, isFileSystemSupported, hasFileHandle, pickSyncFile, openSyncFile, syncFromFile } from './storage.js';
+import { saveSettings, saveGistConfig, testGistConnection, exportJSON, importJSON, saveEntries, saveToGist, setupEncryptedSync, pushEnvelope, syncFromGist, isFileSystemSupported, hasFileHandle, pickSyncFile, openSyncFile, syncFromFile } from './storage.js';
+import {
+  isUnlocked, getEnvelope, getMkBytes, setSession, clearSession,
+  promptAddPasskey, removePasskeys, changePassword,
+} from './sync-unlock.js';
+import { isWebAuthnSupported } from './passkey.js';
 import { searchDrugs, createCustomDrug, atcToCategory } from './drug-search.js';
 import { isWithingsConfigured, hasWithingsToken, startWithingsAuth, fetchWithingsData, disconnectWithings } from './health-import.js';
 import { PROFILES } from './drug-profiles.js';
@@ -71,7 +76,11 @@ export function renderSettings(container) {
   }
   html += `</div>`;
 
-  // Gist (Tier 3)
+  // Gist (Tier 3) — E2E encrypted
+  const unlocked = isUnlocked();
+  const env = getEnvelope();
+  const hasPasskeyWrap = env?.wraps?.some(w => w.type === 'passkey');
+  const webauthnOk = isWebAuthnSupported();
   html += `<div class="settings-section">
     <h3>${t('settings.gist')}</h3>
     <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">${t('settings.gistDesc')}</p>
@@ -86,9 +95,26 @@ export function renderSettings(container) {
       <label>${t('settings.gistId')}</label>
       <input type="text" id="s-gistId" value="${g.id || ''}" placeholder="${t('settings.gistIdPlaceholder')}">
     </div>
-    <div style="margin-top:12px; display:flex; gap:8px;">
+    <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
       <button class="btn-s" id="btnSaveGist">${t('settings.save')}</button>
       <button class="btn-s" id="btnTestConn">${t('settings.testConn')}</button>
+    </div>
+    <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);">
+      <div style="font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">${t('settings.encryption')}</div>
+      <div style="font-size:11px;color:${unlocked ? 'var(--success)' : 'var(--text-dim)'};margin-bottom:12px;">
+        ${unlocked ? '✓ ' + t('settings.encUnlocked') : t('settings.encLocked')}
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        ${unlocked ? `
+          <button class="btn-s" id="btnEncChangePw">${t('settings.encChangePw')}</button>
+          ${webauthnOk && !hasPasskeyWrap ? `<button class="btn-s" id="btnEncAddPasskey" style="border-color:var(--accent);color:var(--accent);">${t('settings.encAddPasskey')}</button>` : ''}
+          ${hasPasskeyWrap ? `<button class="btn-s" id="btnEncRemovePasskey" style="border-color:var(--danger);color:var(--danger);">${t('settings.encRemovePasskey')}</button>` : ''}
+          <button class="btn-s" id="btnEncLock">${t('settings.encLock')}</button>
+        ` : `
+          <button class="btn-s" id="btnEncUnlock" style="border-color:var(--accent);color:var(--accent);">${t('settings.encUnlock')}</button>
+          <button class="btn-s" id="btnEncEnable" style="border-color:var(--success);color:var(--success);">${t('settings.encEnable')}</button>
+        `}
+      </div>
     </div>
   </div>`;
 
@@ -217,6 +243,87 @@ function bindSettingsEvents(container) {
       saveGistConfig();
       toast(t('toast.settingsSaved'));
       updateStatus();
+    });
+  }
+
+  // Encryption controls
+  const encEnableBtn = document.getElementById('btnEncEnable');
+  if (encEnableBtn) {
+    encEnableBtn.addEventListener('click', async () => {
+      state.settings.gist.token = document.getElementById('s-token').value.trim();
+      state.settings.gist.id = document.getElementById('s-gistId').value.trim();
+      saveGistConfig();
+      const ok = await setupEncryptedSync();
+      if (ok) toast(t('toast.encEnabled'));
+      renderSettings(container);
+    });
+  }
+  const encUnlockBtn = document.getElementById('btnEncUnlock');
+  if (encUnlockBtn) {
+    encUnlockBtn.addEventListener('click', async () => {
+      state.settings.gist.token = document.getElementById('s-token').value.trim();
+      state.settings.gist.id = document.getElementById('s-gistId').value.trim();
+      saveGistConfig();
+      await syncFromGist();
+      renderSettings(container);
+    });
+  }
+  const encLockBtn = document.getElementById('btnEncLock');
+  if (encLockBtn) {
+    encLockBtn.addEventListener('click', () => {
+      clearSession();
+      toast(t('toast.encLocked'));
+      renderSettings(container);
+    });
+  }
+  const encChangePwBtn = document.getElementById('btnEncChangePw');
+  if (encChangePwBtn) {
+    encChangePwBtn.addEventListener('click', async () => {
+      const pw = prompt(t('settings.encNewPw'));
+      if (!pw || pw.length < 8) { toast(t('setup.weakPassword')); return; }
+      const pw2 = prompt(t('setup.passwordRepeat'));
+      if (pw !== pw2) { toast(t('setup.passwordMismatch')); return; }
+      const env = getEnvelope();
+      if (!env) return;
+      const next = await changePassword(env, getMkBytes(), pw);
+      const ok = await pushEnvelope(next);
+      if (ok) {
+        setSession(next, getMkBytes());
+        toast(t('toast.pwChanged'));
+        renderSettings(container);
+      }
+    });
+  }
+  const encAddPkBtn = document.getElementById('btnEncAddPasskey');
+  if (encAddPkBtn) {
+    encAddPkBtn.addEventListener('click', async () => {
+      try {
+        const env = getEnvelope();
+        if (!env) return;
+        const next = await promptAddPasskey(env, getMkBytes());
+        const ok = await pushEnvelope(next);
+        if (ok) {
+          setSession(next, getMkBytes());
+          toast(t('toast.passkeyAdded'));
+          renderSettings(container);
+        }
+      } catch (e) {
+        toast(e.message || 'Passkey error');
+      }
+    });
+  }
+  const encRemovePkBtn = document.getElementById('btnEncRemovePasskey');
+  if (encRemovePkBtn) {
+    encRemovePkBtn.addEventListener('click', async () => {
+      const env = getEnvelope();
+      if (!env) return;
+      const next = removePasskeys(env);
+      const ok = await pushEnvelope(next);
+      if (ok) {
+        setSession(next, getMkBytes());
+        toast(t('toast.passkeyRemoved'));
+        renderSettings(container);
+      }
     });
   }
 

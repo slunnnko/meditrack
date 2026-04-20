@@ -3,6 +3,7 @@
 import { state, subscribe, notify } from './state.js';
 import { t, setLang, getLang } from './i18n.js';
 import { loadFromLocal, saveEntries, saveSettings, syncFromGist } from './storage.js';
+import { loadFromSessionCache } from './sync-unlock.js';
 import { loadCatalog, searchDrugs, createCustomDrug, atcToCategory, searchConditions, getDrugsForCondition, fetchWikiSummary, getConditionById } from './drug-search.js';
 import { PROFILES } from './drug-profiles.js';
 import { loadConfig } from './config.js';
@@ -17,6 +18,7 @@ import { showSection, updateStatus, bindModalClose, toast, dateKey } from './ui.
 async function init() {
   loadFromLocal();
   loadConfig();
+  loadFromSessionCache();
   setLang(state.settings.lang);
   migrateEntries();
 

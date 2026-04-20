@@ -107,6 +107,29 @@ export function getDefaultConfig() {
 }
 
 /**
+ * Return the config slice that should be synced to the encrypted Gist blob.
+ * Today this is the whole config (Withings OAuth tokens live in a separate
+ * localStorage key — they rotate per device and are never synced).
+ */
+export function getSyncedConfig() {
+  return structuredClone(getConfig());
+}
+
+/**
+ * Replace the local config with a synced-config payload pulled from the Gist.
+ * Persists to localStorage so offline reads still work.
+ */
+export function applySyncedConfig(incoming) {
+  if (!incoming || typeof incoming !== 'object') return;
+  const merged = deepMerge(structuredClone(DEFAULT_CONFIG), incoming);
+  userConfig = merged;
+  state.config = userConfig;
+  globalThis.__appConfig = userConfig;
+  localStorage.setItem(CONFIG_KEY, JSON.stringify(userConfig));
+  notify({ type: 'config-change' });
+}
+
+/**
  * Get the full AI prompt (user-customized or default).
  */
 export function getAiPrompt() {

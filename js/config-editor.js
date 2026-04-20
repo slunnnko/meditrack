@@ -4,6 +4,7 @@ import { getConfig, saveConfig, resetConfig, getDefaultConfig } from './config.j
 import { t } from './i18n.js';
 import { toast, closeModal } from './ui.js';
 import { state, notify } from './state.js';
+import { saveToGist } from './storage.js';
 
 /**
  * Render the config editor modal.
@@ -58,6 +59,7 @@ export function showConfigEditor() {
       errEl.style.display = 'none';
       toast(t('config.saved'));
       notify({ type: 'config-change' });
+      saveToGist();
     } catch (e) {
       errEl.textContent = `JSON Error: ${e.message}`;
       errEl.style.display = 'block';

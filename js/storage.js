@@ -2,13 +2,20 @@
 
 import { state, notify, entryKey } from './state.js';
 import { t } from './i18n.js';
-import { updateStatus } from './ui.js';
+import { updateStatus, toast } from './ui.js';
+import { getSyncedConfig, applySyncedConfig } from './config.js';
+import {
+  isUnlocked, getMkBytes, getEnvelope, setSession, clearSession,
+  promptUnlock, promptSetup, reseal,
+} from './sync-unlock.js';
+import { decryptPayload } from './crypto.js';
 
 const ENTRIES_KEY = 'ct_entries';
 const GIST_KEY = 'ct_gist';
 const SETTINGS_KEY = 'ct_settings';
 const HEALTH_KEY = 'ct_health_data';
-const GIST_FILENAME = 'medication-tracker-data.json';
+const GIST_FILENAME_ENC = 'medication-tracker.enc.json';
+const GIST_FILENAME_LEGACY = 'medication-tracker-data.json';
 const LEGACY_GIST_FILENAME = 'concerta-data.json';
 
 // ── File System Access API (Tier 2) ──
@@ -191,31 +198,68 @@ export function saveHealthData() {
   localStorage.setItem(HEALTH_KEY, JSON.stringify(state.healthData));
 }
 
-// ── Gist sync ──
+// ── Gist sync (E2E encrypted) ──
+async function patchGist(g, files) {
+  return fetch('https://api.github.com/gists/' + g.id, {
+    method: 'PATCH',
+    headers: { 'Authorization': 'token ' + g.token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ files }),
+  });
+}
+
+async function createGist(g, files) {
+  const res = await fetch('https://api.github.com/gists', {
+    method: 'POST',
+    headers: { 'Authorization': 'token ' + g.token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ description: 'Medication Tracker Data', public: false, files }),
+  });
+  return res.json();
+}
+
+async function fetchGist(g) {
+  const res = await fetch('https://api.github.com/gists/' + g.id, {
+    headers: { 'Authorization': 'token ' + g.token },
+  });
+  return res.json();
+}
+
+function buildPlaintext() {
+  return {
+    entries: state.entries,
+    config: getSyncedConfig(),
+  };
+}
+
+function applyPlaintext(plain) {
+  if (Array.isArray(plain?.entries)) {
+    mergeEntries(plain.entries);
+    saveEntries();
+    notify({ type: 'entries-changed' });
+  }
+  if (plain?.config && typeof plain.config === 'object') {
+    applySyncedConfig(plain.config);
+  }
+}
+
 export async function saveToGist() {
   const g = state.settings.gist;
   if (!g.token) return;
+  if (!isUnlocked()) return; // nothing to do until user unlocks this session
 
-  const payload = {
-    files: { [GIST_FILENAME]: { content: JSON.stringify(state.entries, null, 2) } }
-  };
+  const envelope = getEnvelope();
+  if (!envelope) return;
 
   try {
+    const sealed = await reseal(envelope, getMkBytes(), buildPlaintext());
+    setSession(sealed, getMkBytes());
+
+    const content = JSON.stringify(sealed);
+    const files = { [GIST_FILENAME_ENC]: { content } };
+
     if (g.id) {
-      await fetch('https://api.github.com/gists/' + g.id, {
-        method: 'PATCH',
-        headers: { 'Authorization': 'token ' + g.token, 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      await patchGist(g, files);
     } else {
-      payload.description = 'Medication Tracker Data';
-      payload.public = false;
-      const res = await fetch('https://api.github.com/gists', {
-        method: 'POST',
-        headers: { 'Authorization': 'token ' + g.token, 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const json = await res.json();
+      const json = await createGist(g, files);
       g.id = json.id;
       saveGistConfig();
     }
@@ -231,39 +275,129 @@ export async function syncFromGist() {
   if (!g.token || !g.id) return;
 
   try {
-    const res = await fetch('https://api.github.com/gists/' + g.id, {
-      headers: { 'Authorization': 'token ' + g.token }
-    });
-    const json = await res.json();
+    const json = await fetchGist(g);
 
-    // Try new filename first, fall back to legacy
-    let content = json.files?.[GIST_FILENAME]?.content;
-    if (!content) {
-      content = json.files?.[LEGACY_GIST_FILENAME]?.content;
-      if (content) {
-        // Migrate: rename file in gist
-        await fetch('https://api.github.com/gists/' + g.id, {
-          method: 'PATCH',
-          headers: { 'Authorization': 'token ' + g.token, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            files: {
-              [LEGACY_GIST_FILENAME]: { filename: GIST_FILENAME }
-            }
-          })
-        });
+    const encContent = json.files?.[GIST_FILENAME_ENC]?.content;
+    if (encContent) {
+      let envelope;
+      try { envelope = JSON.parse(encContent); }
+      catch (_) { updateStatus(t('status.syncError'), false); return; }
+
+      // Already unlocked this session? Try the cached MK first.
+      if (isUnlocked()) {
+        try {
+          const plain = await decryptPayload(envelope.payload, envelope.payloadIv, getMkBytes());
+          setSession(envelope, getMkBytes());
+          applyPlaintext(plain);
+          updateStatus(t('status.synced'), true);
+          return;
+        } catch (_) {
+          // Cached MK doesn't match (key rotated elsewhere). Force re-unlock.
+          clearSession();
+        }
       }
+
+      try {
+        const { plaintext, mkBytes } = await promptUnlock(envelope);
+        setSession(envelope, mkBytes);
+        applyPlaintext(plaintext);
+        updateStatus(t('status.synced'), true);
+      } catch (_) {
+        updateStatus(t('unlock.cancelledStatus'), false);
+      }
+      return;
     }
 
-    if (content) {
-      const remote = JSON.parse(content);
-      mergeEntries(remote);
-      saveEntries();
-      updateStatus(t('status.synced'), true);
-      notify({ type: 'entries-changed' });
+    // No encrypted file. Check for legacy plaintext — user needs to opt in to migrate.
+    const legacyContent = json.files?.[GIST_FILENAME_LEGACY]?.content
+                       ?? json.files?.[LEGACY_GIST_FILENAME]?.content;
+    if (legacyContent) {
+      updateStatus(t('status.legacyFound'), false);
+      toast(t('toast.legacyFound'));
+      return;
     }
+
+    // Empty gist — nothing to sync.
   } catch (err) {
     console.error('Gist sync:', err);
     updateStatus(t('status.syncError'), false);
+  }
+}
+
+/**
+ * First-time enable: build an envelope from local state (and any legacy plaintext),
+ * upload to the Gist, and retire the legacy file.
+ * Called from the settings panel.
+ */
+export async function setupEncryptedSync() {
+  const g = state.settings.gist;
+  if (!g.token) {
+    toast(t('toast.enterToken'));
+    return false;
+  }
+
+  let legacyEntries = null;
+  if (g.id) {
+    try {
+      const json = await fetchGist(g);
+      if (json.files?.[GIST_FILENAME_ENC]) {
+        toast(t('toast.alreadyEncrypted'));
+        return false;
+      }
+      const legacyContent = json.files?.[GIST_FILENAME_LEGACY]?.content
+                         ?? json.files?.[LEGACY_GIST_FILENAME]?.content;
+      if (legacyContent) {
+        try { legacyEntries = JSON.parse(legacyContent); } catch (_) {}
+      }
+    } catch (err) {
+      console.warn('Setup precheck failed:', err);
+    }
+  }
+
+  // Merge legacy entries into local state so they end up in the encrypted payload.
+  if (Array.isArray(legacyEntries)) {
+    mergeEntries(legacyEntries);
+    saveEntries();
+  }
+
+  try {
+    const { envelope, mkBytes } = await promptSetup({ plaintext: buildPlaintext() });
+
+    const content = JSON.stringify(envelope);
+    const files = { [GIST_FILENAME_ENC]: { content } };
+    // Remove legacy files on the same PATCH so they don't leak.
+    if (g.id) {
+      files[GIST_FILENAME_LEGACY] = null;
+      files[LEGACY_GIST_FILENAME] = null;
+      await patchGist(g, files);
+    } else {
+      const json = await createGist(g, files);
+      g.id = json.id;
+      saveGistConfig();
+    }
+
+    setSession(envelope, mkBytes);
+    updateStatus(t('status.synced'), true);
+    notify({ type: 'entries-changed' });
+    return true;
+  } catch (e) {
+    if (e?.message !== 'cancelled') console.error('Setup failed:', e);
+    return false;
+  }
+}
+
+/**
+ * Replace the stored envelope on the Gist (after password change / passkey add).
+ */
+export async function pushEnvelope(envelope) {
+  const g = state.settings.gist;
+  if (!g.token || !g.id) return false;
+  try {
+    await patchGist(g, { [GIST_FILENAME_ENC]: { content: JSON.stringify(envelope) } });
+    return true;
+  } catch (err) {
+    console.error('Envelope push failed:', err);
+    return false;
   }
 }
 
