@@ -338,6 +338,54 @@ const TRANSLATIONS = {
     'health.totalCalories': 'Celkové kalorie',
     'health.activeMinutes': 'Aktivní minuty',
     'health.sleepDuration': 'Délka spánku',
+
+    // Heart-rate analysis
+    'settings.hrAnalysis': 'Analýza tepové frekvence',
+    'settings.hrAnalysisDesc': 'Stáhne minutová data z Withings, spočítá baseline z pre-medikačního období a detekuje okno působení léku. Stahování je dlouhé — jeden den = jeden API request.',
+    'settings.hrBaselineCutoff': 'Baseline do data',
+    'settings.hrBaselineReady': '✓ Baseline připraven ({n} slotů)',
+    'settings.hrBaselineMissing': 'Baseline zatím nevytvořen — nastav cutoff a stáhni intraday data',
+    'settings.hrAdvanced': 'Pokročilé parametry',
+    'settings.hrOnsetThreshold': 'Práh nástupu (bpm nad baseline)',
+    'settings.hrSustain': 'Doba udržení',
+    'settings.hrSlot': 'Velikost time-slotu',
+    'settings.hrRangeStart': 'Od',
+    'settings.hrRangeEnd': 'Do',
+    'settings.hrFetch': 'Stáhnout intraday HR',
+    'settings.hrClearBaseline': 'Smazat baseline',
+    'settings.hrProgress': '{phase}: {date} ({current}/{total})',
+    'settings.hrPhase.fetching': 'Stahuji',
+    'settings.hrPhase.processing': 'Zpracovávám',
+    'settings.hrPhase.baseline': 'Stavím baseline',
+    'settings.hrPhase.analysis': 'Analyzuji',
+
+    // Medication effect window
+    'hrWindow.title': 'Okno působení léku',
+    'hrWindow.onset': 'Nástup',
+    'hrWindow.peak': 'Vrchol',
+    'hrWindow.offset': 'Doběh',
+    'hrWindow.duration': 'Doba trvání',
+    'hrWindow.samples': 'Vzorky',
+    'hrWindow.corrected': 'opraveno',
+    'hrWindow.none': '— (nebyl detekován)',
+    'hrWindow.caffeineAtOnset': 'Kofein při nástupu',
+    'hrWindow.caffeineConfound': 'možný vliv kofeinu',
+
+    // Caffeine log
+    'caffeine.title': 'Čaj / káva (korelace s tepem)',
+    'caffeine.add': 'Přidat',
+    'caffeine.type.coffee': 'Káva',
+    'caffeine.type.tea': 'Čaj',
+    'caffeine.type.energy': 'Energeťák',
+    'caffeine.unit.cup': 'šálek',
+    'caffeine.unit.ml': 'ml',
+    'caffeine.unit.mg': 'mg',
+
+    // HR toasts / confirm
+    'heartRate.fetchDone': 'Intraday HR: zpracováno {n} dní',
+    'toast.missingDate': 'Zadej rozsah dat',
+    'toast.baselineCleared': 'Baseline smazán',
+    'confirm.clearBaseline': 'Smazat baseline a všechna detekovaná okna?',
   },
 
   en: {
@@ -658,6 +706,54 @@ const TRANSLATIONS = {
     'health.totalCalories': 'Total calories',
     'health.activeMinutes': 'Active minutes',
     'health.sleepDuration': 'Sleep duration',
+
+    // Heart-rate analysis
+    'settings.hrAnalysis': 'Heart-rate analysis',
+    'settings.hrAnalysisDesc': 'Fetch minute-level data from Withings, build a baseline from the pre-medication period, and detect medication effect windows. Fetching is slow — one day = one API request.',
+    'settings.hrBaselineCutoff': 'Baseline cutoff date',
+    'settings.hrBaselineReady': '✓ Baseline ready ({n} slots)',
+    'settings.hrBaselineMissing': 'Baseline not built yet — set cutoff and fetch intraday data',
+    'settings.hrAdvanced': 'Advanced parameters',
+    'settings.hrOnsetThreshold': 'Onset threshold (bpm above baseline)',
+    'settings.hrSustain': 'Sustain duration',
+    'settings.hrSlot': 'Time-slot size',
+    'settings.hrRangeStart': 'From',
+    'settings.hrRangeEnd': 'To',
+    'settings.hrFetch': 'Fetch intraday HR',
+    'settings.hrClearBaseline': 'Clear baseline',
+    'settings.hrProgress': '{phase}: {date} ({current}/{total})',
+    'settings.hrPhase.fetching': 'Fetching',
+    'settings.hrPhase.processing': 'Processing',
+    'settings.hrPhase.baseline': 'Building baseline',
+    'settings.hrPhase.analysis': 'Analyzing',
+
+    // Medication effect window
+    'hrWindow.title': 'Medication effect window',
+    'hrWindow.onset': 'Onset',
+    'hrWindow.peak': 'Peak',
+    'hrWindow.offset': 'Offset',
+    'hrWindow.duration': 'Duration',
+    'hrWindow.samples': 'Samples',
+    'hrWindow.corrected': 'corrected',
+    'hrWindow.none': '— (not detected)',
+    'hrWindow.caffeineAtOnset': 'Caffeine at onset',
+    'hrWindow.caffeineConfound': 'possible caffeine confound',
+
+    // Caffeine log
+    'caffeine.title': 'Tea / coffee (HR correlation)',
+    'caffeine.add': 'Add',
+    'caffeine.type.coffee': 'Coffee',
+    'caffeine.type.tea': 'Tea',
+    'caffeine.type.energy': 'Energy drink',
+    'caffeine.unit.cup': 'cup',
+    'caffeine.unit.ml': 'ml',
+    'caffeine.unit.mg': 'mg',
+
+    // HR toasts / confirm
+    'heartRate.fetchDone': 'Intraday HR: {n} days processed',
+    'toast.missingDate': 'Set the date range',
+    'toast.baselineCleared': 'Baseline cleared',
+    'confirm.clearBaseline': 'Clear baseline and all detected windows?',
   }
 };
 

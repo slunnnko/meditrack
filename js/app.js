@@ -45,7 +45,13 @@ async function init() {
 function migrateEntries() {
   let migrated = false;
   state.entries = state.entries.map(entry => {
-    if (entry.drugId) return entry; // already migrated
+    if (entry.drugId) {
+      if (!Array.isArray(entry.caffeine)) {
+        entry.caffeine = [];
+        migrated = true;
+      }
+      return entry;
+    }
 
     migrated = true;
     return {
@@ -81,6 +87,7 @@ function migrateEntries() {
         nightWaking: entry.nightWaking || null,
       },
       healthData: {},
+      caffeine: [],
       note: entry.note || '',
     };
   });

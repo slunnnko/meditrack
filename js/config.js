@@ -38,6 +38,28 @@ const DEFAULT_CONFIG = {
     showCorrelation: true,
   },
 
+  // ── Heart-rate analysis ──
+  heartRate: {
+    baselineCutoff: '',           // 'YYYY-MM-DD' — readings before this feed baseline
+    slotMinutes: 30,              // time-of-day slot size for baseline bucketing
+    slotMinN: 5,                  // minimum samples required per slot
+    onsetThreshold: 10,           // bpm above baseline median
+    sustainMinutes: 15,           // must hold above threshold this long to count as onset
+    peakWindowMinutes: 30,        // window size for rolling peak search
+  },
+
+  // ── Caffeine tracking (for HR window correlation) ──
+  caffeine: {
+    types: ['coffee', 'tea', 'energy'],
+    defaults: {                   // mg caffeine per unit (cup by default)
+      coffee: 90,
+      tea: 40,
+      energy: 80,
+    },
+    halfLifeMinutes: 300,         // plasma half-life ~5h — exponential decay model
+    correlationWindowMinutes: 90, // flag HR onset if caffeine intake within this window
+  },
+
   // ── AI Export ──
   ai: {
     prompt: `You are analyzing medication tracking data for a patient. The data below contains daily self-reported metrics recorded during a medication trial/adjustment period. Your role is to:

@@ -161,6 +161,16 @@ function showDetail(date) {
     h += `<div class="pill pill-dose" style="display:inline-block;width:fit-content;">${doseStr}</div>`;
   }
 
+  // Caffeine log
+  if (Array.isArray(e.caffeine) && e.caffeine.length) {
+    const parts = e.caffeine.map(c => {
+      const typeLabel = t('caffeine.type.' + c.type) || c.type;
+      const unitLabel = t('caffeine.unit.' + (c.unit || 'cup')) || c.unit || '';
+      return `${caffeineIcon(c.type)} ${c.amount} ${unitLabel} ${typeLabel}${c.time ? ` @ ${c.time}` : ''}`;
+    });
+    h += `<div style="display:flex;flex-wrap:wrap;gap:4px;">${parts.map(p => `<span class="pill pill-mid">${p}</span>`).join('')}</div>`;
+  }
+
   // Metrics
   if (e.metrics) {
     const category = e.drugCategory || 'generic';
@@ -212,6 +222,11 @@ function showDetail(date) {
       h += `<div style="margin-top:12px;padding-top:8px;border-top:1px dashed var(--border);font-size:11px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;">${t('deviceData.title')}</div>`;
       h += deviceRows;
     }
+
+    // Medication effect window (computed from intraday HR)
+    if (hd.hrWindow) {
+      h += renderHrWindow(hd.hrWindow);
+    }
   }
 
   // Note
@@ -249,6 +264,53 @@ function detailRow(label, value) {
   return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
     <span style="color:var(--text-secondary);font-size:13px;">${label}</span>
     <span style="font-size:13px;font-weight:500;">${value}</span></div>`;
+}
+
+function fmtClock(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+function fmtDuration(mins) {
+  if (mins == null) return '—';
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return h > 0 ? `${h}h ${m}min` : `${m}min`;
+}
+
+function renderHrWindow(w) {
+  let html = `<div style="margin-top:12px;padding-top:8px;border-top:1px dashed var(--border);font-size:11px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;">${t('hrWindow.title')}</div>`;
+
+  if (w.onset) {
+    const delay = w.onsetDelayFromDose != null ? ` (+${w.onsetDelayFromDose} min)` : '';
+    html += detailRow(t('hrWindow.onset'), fmtClock(w.onset) + delay);
+  } else {
+    html += detailRow(t('hrWindow.onset'), t('hrWindow.none'));
+  }
+  if (w.peakTime) {
+    html += detailRow(t('hrWindow.peak'), `${fmtClock(w.peakTime)} · +${w.peakElevation} bpm`);
+  }
+  if (w.offset) {
+    html += detailRow(t('hrWindow.offset'), fmtClock(w.offset));
+  }
+  if (w.durationMinutes != null) {
+    html += detailRow(t('hrWindow.duration'), fmtDuration(w.durationMinutes));
+  }
+  if (w.cleanedCount != null) {
+    html += detailRow(t('hrWindow.samples'), `${w.cleanedCount} / ${w.rawCount}${w.correctedCount ? ` (${w.correctedCount} ${t('hrWindow.corrected')})` : ''}`);
+  }
+  if (w.caffeineAtOnset != null && w.caffeineAtOnset > 0) {
+    const warn = w.possibleCaffeineConfound ? ` ⚠ ${t('hrWindow.caffeineConfound')}` : '';
+    html += detailRow(t('hrWindow.caffeineAtOnset'), `${w.caffeineAtOnset} mg${warn}`);
+  }
+  return html;
+}
+
+function caffeineIcon(type) {
+  if (type === 'tea') return '🍵';
+  if (type === 'energy') return '⚡';
+  return '☕';
 }
 
 function getShortLabel(metricId) {

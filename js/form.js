@@ -108,6 +108,13 @@ export function renderForm(container) {
     html += `</div>`;
   }
 
+  // Caffeine card — tea/coffee log for HR correlation
+  html += `<div class="form-card">
+    <div class="form-card-title">${t('caffeine.title')}</div>
+    <div id="caffeineRows"></div>
+    <button type="button" class="toggle-btn" id="btnAddCaffeine" style="margin-top:6px;">+ ${t('caffeine.add')}</button>
+  </div>`;
+
   // Note card
   html += `<div class="form-card">
     <div class="form-card-title">${t('note.title')}</div>
@@ -216,6 +223,58 @@ function renderEnergyCard(metrics, groupDef) {
   return html;
 }
 
+function renderCaffeineRow(row = {}, idx = 0) {
+  const cfg = getConfig();
+  const types = cfg.caffeine?.types || ['coffee', 'tea', 'energy'];
+  const type = row.type || types[0];
+  const amount = row.amount ?? 1;
+  const unit = row.unit || 'cup';
+  const time = row.time || '';
+  const typeOptions = types.map(tp =>
+    `<option value="${tp}" ${tp === type ? 'selected' : ''}>${t('caffeine.type.' + tp)}</option>`
+  ).join('');
+  const unitOptions = ['cup', 'ml', 'mg'].map(u =>
+    `<option value="${u}" ${u === unit ? 'selected' : ''}>${t('caffeine.unit.' + u)}</option>`
+  ).join('');
+  return `<div class="caffeine-row" data-idx="${idx}" style="display:flex;gap:6px;align-items:center;margin-bottom:6px;flex-wrap:wrap;">
+    <select class="caf-type">${typeOptions}</select>
+    <input type="number" class="caf-amount" value="${amount}" step="0.5" min="0" style="width:64px;">
+    <select class="caf-unit">${unitOptions}</select>
+    <input type="time" class="caf-time" value="${time}">
+    <button type="button" class="caf-remove toggle-btn" style="flex:0;padding:4px 8px;">✕</button>
+  </div>`;
+}
+
+function renderCaffeineRows(rows) {
+  const el = document.getElementById('caffeineRows');
+  if (!el) return;
+  el.innerHTML = rows.map((r, i) => renderCaffeineRow(r, i)).join('');
+  bindCaffeineRemove();
+}
+
+function bindCaffeineRemove() {
+  const container = document.getElementById('caffeineRows');
+  if (!container) return;
+  for (const btn of container.querySelectorAll('.caf-remove')) {
+    btn.onclick = () => {
+      btn.closest('.caffeine-row')?.remove();
+    };
+  }
+}
+
+function collectCaffeine() {
+  const rows = document.querySelectorAll('#caffeineRows .caffeine-row');
+  const out = [];
+  for (const row of rows) {
+    const type = row.querySelector('.caf-type')?.value;
+    const amount = parseFloat(row.querySelector('.caf-amount')?.value);
+    const unit = row.querySelector('.caf-unit')?.value || 'cup';
+    const time = row.querySelector('.caf-time')?.value || '';
+    if (type && amount > 0) out.push({ type, amount, unit, time });
+  }
+  return out;
+}
+
 function bindFormEvents(container) {
   // Scale buttons
   for (const scale of container.querySelectorAll('.scale')) {
@@ -285,6 +344,20 @@ function bindFormEvents(container) {
       notify({ type: 'mode-change', mode: btn.dataset.mode });
     });
   }
+
+  // Caffeine add button
+  const addCafBtn = document.getElementById('btnAddCaffeine');
+  if (addCafBtn) {
+    addCafBtn.addEventListener('click', () => {
+      const rows = document.getElementById('caffeineRows');
+      if (!rows) return;
+      const nextIdx = rows.querySelectorAll('.caffeine-row').length;
+      rows.insertAdjacentHTML('beforeend', renderCaffeineRow({}, nextIdx));
+      bindCaffeineRemove();
+    });
+  }
+  // Initial empty caffeine rows container
+  renderCaffeineRows([]);
 
   // Save
   const saveBtn = document.getElementById('saveBtn');
@@ -376,6 +449,7 @@ function saveEntry() {
     mode,
     metrics: metricsData,
     healthData: {},
+    caffeine: collectCaffeine(),
     note: document.getElementById('f-note')?.value?.trim() || '',
   };
 
@@ -442,6 +516,9 @@ export function loadFormForDate(date) {
     }
   }
 
+  // Load caffeine rows
+  renderCaffeineRows(Array.isArray(entry.caffeine) ? entry.caffeine : []);
+
   // Load note
   const noteEl = document.getElementById('f-note');
   if (noteEl && entry.note) noteEl.value = entry.note;
@@ -461,6 +538,8 @@ function resetForm() {
 
   const noteEl = document.getElementById('f-note');
   if (noteEl) noteEl.value = '';
+
+  renderCaffeineRows([]);
 
   // Reset number/time inputs
   for (const el of document.querySelectorAll('[id^="f-"]')) {

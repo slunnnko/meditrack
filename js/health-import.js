@@ -3,9 +3,10 @@
 import { state, notify } from './state.js';
 import { t } from './i18n.js';
 import { toast } from './ui.js';
-import { saveHealthData, saveEntries, saveToGist } from './storage.js';
+import { saveHealthData, saveEntries, saveToGist, saveHrBaseline } from './storage.js';
 import { getConfig } from './config.js';
 import { METRICS } from './drug-profiles.js';
+import { analyzeDay, buildBaseline } from './heart-rate.js';
 
 /**
  * Backfill existing entries with device data by date match.
@@ -544,4 +545,186 @@ export async function fetchWithingsData(startDate, endDate) {
 export function disconnectWithings() {
   localStorage.removeItem(WITHINGS_TOKEN_KEY);
   toast(t('withings.disconnected'));
+}
+
+// ══════════════════════════════════════════════
+// ── Withings Intraday HR — for medication window detection ──
+// Endpoint: /v2/measure action=getintradayactivity
+// Limit: one day per request; we loop and report progress.
+// ══════════════════════════════════════════════
+
+const WITHINGS_INTRADAY_URL = 'https://wbsapi.withings.net/v2/measure';
+
+function toEpoch(dateStr, endOfDay = false) {
+  return Math.floor(new Date(dateStr + (endOfDay ? 'T23:59:59' : 'T00:00:00')).getTime() / 1000);
+}
+
+function eachDate(startDate, endDate) {
+  const out = [];
+  const cur = new Date(startDate + 'T00:00:00');
+  const end = new Date(endDate + 'T00:00:00');
+  while (cur <= end) {
+    out.push(cur.toISOString().slice(0, 10));
+    cur.setDate(cur.getDate() + 1);
+  }
+  return out;
+}
+
+async function fetchIntradayDay(token, dateStr) {
+  const start = toEpoch(dateStr, false);
+  const end = toEpoch(dateStr, true);
+  const res = await fetch(WITHINGS_INTRADAY_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `action=getintradayactivity&data_fields=heart_rate&startdate=${start}&enddate=${end}`,
+  });
+  const data = await res.json();
+  if (data.status !== 0) {
+    throw new Error('Withings intraday status=' + data.status + (data.error ? ' ' + data.error : ''));
+  }
+  const series = data.body?.series || {};
+  const readings = [];
+  for (const [epochStr, entry] of Object.entries(series)) {
+    if (entry?.heart_rate == null) continue;
+    readings.push({
+      timestamp: new Date(Number(epochStr) * 1000),
+      bpm: entry.heart_rate,
+    });
+  }
+  return readings;
+}
+
+function doseTimeFor(date) {
+  const drugId = state.settings.activeDrug?.id;
+  const entry = state.entries.find(e => e.date === date && (!drugId || e.drugId === drugId));
+  if (!entry?.doses?.length) return null;
+  // Earliest dose of the day.
+  return entry.doses.slice().sort((a, b) => (a.time || '').localeCompare(b.time || ''))[0]?.time || null;
+}
+
+function caffeineFor(date) {
+  const drugId = state.settings.activeDrug?.id;
+  const entry = state.entries.find(e => e.date === date && (!drugId || e.drugId === drugId));
+  return Array.isArray(entry?.caffeine) ? entry.caffeine : [];
+}
+
+/**
+ * Fetch intraday HR from Withings day-by-day, build baseline from pre-cutoff
+ * readings, analyze post-cutoff days and store per-day summaries.
+ * onProgress({ current, total, date, phase: 'fetching'|'processing'|'baseline'|'analysis' })
+ */
+export async function fetchWithingsIntraday(startDate, endDate, onProgress) {
+  const token = await refreshWithingsToken();
+  if (!token) {
+    toast(t('withings.notConnected'));
+    return;
+  }
+
+  const cfg = getConfig();
+  const hrCfg = cfg.heartRate || {};
+  const cafCfg = cfg.caffeine || {};
+  const cutoffStr = hrCfg.baselineCutoff || '';
+  const cutoff = cutoffStr ? new Date(cutoffStr + 'T00:00:00') : null;
+
+  const dates = eachDate(startDate, endDate);
+  const total = dates.length;
+  const baselineReadings = [];
+  const perDay = {}; // date → cleaned readings (only kept for post-cutoff analysis)
+
+  const report = (patch) => {
+    const prog = { current: 0, total, ...patch };
+    state.ui.hrFetchProgress = prog;
+    if (typeof onProgress === 'function') onProgress(prog);
+    notify({ type: 'hr-fetch-progress', ...prog });
+  };
+
+  try {
+    for (let i = 0; i < dates.length; i++) {
+      const date = dates[i];
+      report({ current: i + 1, date, phase: 'fetching' });
+      let readings;
+      try {
+        readings = await fetchIntradayDay(token, date);
+      } catch (e) {
+        console.warn('[Withings] intraday fetch failed', date, e.message);
+        continue;
+      }
+      report({ current: i + 1, date, phase: 'processing' });
+
+      if (!readings.length) continue;
+      const isPreCutoff = cutoff && new Date(date + 'T12:00:00') < cutoff;
+      if (isPreCutoff) {
+        baselineReadings.push(...readings);
+      } else {
+        perDay[date] = readings;
+      }
+    }
+
+    // Build baseline if we collected anything; fall back to existing baseline.
+    let baseline = state.hrBaseline;
+    if (baselineReadings.length) {
+      report({ current: total, phase: 'baseline' });
+      baseline = buildBaseline(baselineReadings, {
+        cutoffDate: cutoff,
+        slotMinutes: hrCfg.slotMinutes || 30,
+        minN: hrCfg.slotMinN || 5,
+      });
+      state.hrBaseline = baseline;
+      saveHrBaseline();
+    }
+
+    // Analyze post-cutoff days.
+    const dateKeys = Object.keys(perDay);
+    for (let i = 0; i < dateKeys.length; i++) {
+      const date = dateKeys[i];
+      report({ current: i + 1, total: dateKeys.length, date, phase: 'analysis' });
+
+      const readings = perDay[date];
+      const summary = analyzeDay(readings, baseline, {
+        doseTime: doseTimeFor(date),
+        onsetThreshold: hrCfg.onsetThreshold,
+        sustainMinutes: hrCfg.sustainMinutes,
+        peakWindowMinutes: hrCfg.peakWindowMinutes,
+        caffeineLog: caffeineFor(date),
+        caffeineHalfLifeMinutes: cafCfg.halfLifeMinutes,
+        caffeineCorrelationWindowMinutes: cafCfg.correlationWindowMinutes,
+        caffeineDefaults: cafCfg.defaults,
+      });
+
+      if (!state.healthData[date]) state.healthData[date] = {};
+      state.healthData[date].hrWindow = summary;
+      state.healthData[date].hrIntradayCount = summary.cleanedCount;
+    }
+
+    saveHealthData();
+    saveToGist();
+    state.ui.hrFetchProgress = null;
+    notify({ type: 'hr-fetch-progress', done: true });
+    notify({ type: 'entries-changed' });
+    toast(t('heartRate.fetchDone', { n: dateKeys.length }));
+  } catch (e) {
+    console.error('[Withings] intraday error:', e);
+    state.ui.hrFetchProgress = null;
+    notify({ type: 'hr-fetch-progress', done: true, error: e.message });
+    toast(t('toast.importError') + ' — ' + e.message);
+  }
+}
+
+/**
+ * Rebuild the baseline from the readings already covered by a fetch window.
+ * Useful if the user changes the baseline cutoff date — they should re-fetch.
+ * Exposed in case we wire a "clear baseline" button.
+ */
+export function clearHrBaseline() {
+  state.hrBaseline = null;
+  saveHrBaseline();
+  for (const hd of Object.values(state.healthData)) {
+    delete hd.hrWindow;
+    delete hd.hrIntradayCount;
+  }
+  saveHealthData();
+  notify({ type: 'entries-changed' });
 }

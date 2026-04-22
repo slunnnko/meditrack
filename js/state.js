@@ -5,6 +5,7 @@ const listeners = [];
 export const state = {
   entries: [],
   healthData: {},
+  hrBaseline: null,  // per-time-of-day HR baseline, built from pre-medication readings
   config: null,  // loaded from config.js
   settings: {
     gist: { token: '', id: '' },
@@ -16,6 +17,7 @@ export const state = {
     modalDate: null,
     activeSection: 'log',
     charts: {},
+    hrFetchProgress: null,  // { current, total, date, phase } during intraday fetch
   }
 };
 

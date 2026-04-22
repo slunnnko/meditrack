@@ -10,7 +10,8 @@ import {
 } from './sync-unlock.js';
 import { isWebAuthnSupported } from './passkey.js';
 import { searchDrugs, createCustomDrug, atcToCategory } from './drug-search.js';
-import { isWithingsConfigured, hasWithingsToken, startWithingsAuth, fetchWithingsData, disconnectWithings } from './health-import.js';
+import { isWithingsConfigured, hasWithingsToken, startWithingsAuth, fetchWithingsData, disconnectWithings, fetchWithingsIntraday, clearHrBaseline } from './health-import.js';
+import { getConfig, saveConfig } from './config.js';
 import { PROFILES } from './drug-profiles.js';
 import { copyAiExport, downloadAiExport } from './ai-export.js';
 import { showConfigEditor } from './config-editor.js';
@@ -153,6 +154,60 @@ export function renderSettings(container) {
   }
 
   html += `</div></div>`;
+
+  // Heart-rate analysis
+  const cfg = getConfig();
+  const hr = cfg.heartRate || {};
+  const today = new Date().toISOString().slice(0, 10);
+  const defaultStart = new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10);
+  const hasBaseline = !!state.hrBaseline?.slots;
+  const slotCount = hasBaseline ? Object.keys(state.hrBaseline.slots).length : 0;
+  html += `<div class="settings-section">
+    <h3>${t('settings.hrAnalysis')}</h3>
+    <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">${t('settings.hrAnalysisDesc')}</p>
+    <div class="settings-row">
+      <label>${t('settings.hrBaselineCutoff')}</label>
+      <input type="date" id="s-hrCutoff" value="${hr.baselineCutoff || ''}">
+    </div>
+    <div style="font-size:11px;color:${hasBaseline ? 'var(--success)' : 'var(--text-dim)'};margin:4px 0 12px 0;">
+      ${hasBaseline ? `✓ ${t('settings.hrBaselineReady', { n: slotCount })}` : t('settings.hrBaselineMissing')}
+    </div>
+    <details style="margin-bottom:12px;">
+      <summary style="cursor:pointer;font-size:12px;color:var(--text-dim);">${t('settings.hrAdvanced')}</summary>
+      <div class="settings-row" style="margin-top:8px;">
+        <label>${t('settings.hrOnsetThreshold')}</label>
+        <input type="number" id="s-hrOnset" value="${hr.onsetThreshold || 10}" min="1" max="50" step="1" style="width:72px;">
+        <span class="unit">bpm</span>
+      </div>
+      <div class="settings-row">
+        <label>${t('settings.hrSustain')}</label>
+        <input type="number" id="s-hrSustain" value="${hr.sustainMinutes || 15}" min="1" max="60" step="1" style="width:72px;">
+        <span class="unit">min</span>
+      </div>
+      <div class="settings-row">
+        <label>${t('settings.hrSlot')}</label>
+        <input type="number" id="s-hrSlot" value="${hr.slotMinutes || 30}" min="5" max="60" step="5" style="width:72px;">
+        <span class="unit">min</span>
+      </div>
+    </details>
+    <div class="settings-row">
+      <label>${t('settings.hrRangeStart')}</label>
+      <input type="date" id="s-hrStart" value="${defaultStart}">
+    </div>
+    <div class="settings-row">
+      <label>${t('settings.hrRangeEnd')}</label>
+      <input type="date" id="s-hrEnd" value="${today}">
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+      <button class="btn-s" id="btnHrSaveCfg">${t('settings.save')}</button>
+      <button class="btn-s" id="btnHrFetch" style="border-color:var(--accent);color:var(--accent);" ${wConnected ? '' : 'disabled'}>${t('settings.hrFetch')}</button>
+      ${hasBaseline ? `<button class="btn-s" id="btnHrClearBaseline" style="border-color:var(--danger);color:var(--danger);">${t('settings.hrClearBaseline')}</button>` : ''}
+    </div>
+    <div id="hrProgress" style="margin-top:12px;display:none;">
+      <progress id="hrProgressBar" value="0" max="1" style="width:100%;height:8px;"></progress>
+      <div id="hrProgressLabel" style="font-size:11px;color:var(--text-dim);margin-top:4px;"></div>
+    </div>
+  </div>`;
 
   // Config editor
   html += `<div class="settings-section">
@@ -374,6 +429,65 @@ function bindSettingsEvents(container) {
   if (withingsDisconnectBtn) {
     withingsDisconnectBtn.addEventListener('click', () => {
       disconnectWithings();
+      renderSettings(container);
+    });
+  }
+
+  // Heart-rate analysis
+  const hrSaveBtn = document.getElementById('btnHrSaveCfg');
+  if (hrSaveBtn) {
+    hrSaveBtn.addEventListener('click', () => {
+      const cfg = getConfig();
+      cfg.heartRate = cfg.heartRate || {};
+      cfg.heartRate.baselineCutoff = document.getElementById('s-hrCutoff').value || '';
+      cfg.heartRate.onsetThreshold = parseInt(document.getElementById('s-hrOnset').value) || 10;
+      cfg.heartRate.sustainMinutes = parseInt(document.getElementById('s-hrSustain').value) || 15;
+      cfg.heartRate.slotMinutes = parseInt(document.getElementById('s-hrSlot').value) || 30;
+      saveConfig(cfg);
+      saveToGist();
+      toast(t('toast.settingsSaved'));
+    });
+  }
+  const hrFetchBtn = document.getElementById('btnHrFetch');
+  if (hrFetchBtn) {
+    hrFetchBtn.addEventListener('click', async () => {
+      const start = document.getElementById('s-hrStart').value;
+      const end = document.getElementById('s-hrEnd').value;
+      if (!start || !end) { toast(t('toast.missingDate')); return; }
+      const progWrap = document.getElementById('hrProgress');
+      const progBar = document.getElementById('hrProgressBar');
+      const progLabel = document.getElementById('hrProgressLabel');
+      hrFetchBtn.disabled = true;
+      if (progWrap) progWrap.style.display = 'block';
+      try {
+        await fetchWithingsIntraday(start, end, ({ current, total, date, phase, done, error }) => {
+          if (done) {
+            if (progWrap) progWrap.style.display = 'none';
+            return;
+          }
+          if (progBar) progBar.max = total || 1;
+          if (progBar) progBar.value = current || 0;
+          if (progLabel) {
+            progLabel.textContent = t('settings.hrProgress', {
+              phase: t('settings.hrPhase.' + phase) || phase,
+              date: date || '',
+              current: current || 0,
+              total: total || 0,
+            });
+          }
+        });
+      } finally {
+        hrFetchBtn.disabled = false;
+        renderSettings(container);
+      }
+    });
+  }
+  const hrClearBtn = document.getElementById('btnHrClearBaseline');
+  if (hrClearBtn) {
+    hrClearBtn.addEventListener('click', () => {
+      if (!confirm(t('confirm.clearBaseline'))) return;
+      clearHrBaseline();
+      toast(t('toast.baselineCleared'));
       renderSettings(container);
     });
   }

@@ -14,6 +14,7 @@ const ENTRIES_KEY = 'ct_entries';
 const GIST_KEY = 'ct_gist';
 const SETTINGS_KEY = 'ct_settings';
 const HEALTH_KEY = 'ct_health_data';
+const HR_BASELINE_KEY = 'ct_hr_baseline';
 const GIST_FILENAME_ENC = 'medication-tracker.enc.json';
 const GIST_FILENAME_LEGACY = 'medication-tracker-data.json';
 const LEGACY_GIST_FILENAME = 'concerta-data.json';
@@ -174,6 +175,11 @@ export function loadFromLocal() {
     const raw = localStorage.getItem(HEALTH_KEY);
     if (raw) state.healthData = JSON.parse(raw);
   } catch (e) { /* ignore */ }
+
+  try {
+    const raw = localStorage.getItem(HR_BASELINE_KEY);
+    if (raw) state.hrBaseline = JSON.parse(raw);
+  } catch (e) { /* ignore */ }
 }
 
 // ── Save to localStorage + file ──
@@ -196,6 +202,14 @@ export function saveGistConfig() {
 
 export function saveHealthData() {
   localStorage.setItem(HEALTH_KEY, JSON.stringify(state.healthData));
+}
+
+export function saveHrBaseline() {
+  if (state.hrBaseline) {
+    localStorage.setItem(HR_BASELINE_KEY, JSON.stringify(state.hrBaseline));
+  } else {
+    localStorage.removeItem(HR_BASELINE_KEY);
+  }
 }
 
 // ── Gist sync (E2E encrypted) ──
