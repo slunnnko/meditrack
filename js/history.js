@@ -18,6 +18,13 @@ const HEALTH_LABELS = {
   diastolic: 'metric.bloodPressureDia',
   spo2: 'health.spo2',
   restingHeartRate: 'health.restingHeartRate',
+  sleepHrMin: 'health.sleepHrMin',
+  sleepHrMax: 'health.sleepHrMax',
+  sleepDeep: 'health.sleepDeep',
+  sleepLight: 'health.sleepLight',
+  sleepRem: 'health.sleepRem',
+  sleepWakeups: 'health.sleepWakeups',
+  sleepBreathing: 'health.sleepBreathing',
   hrv: 'health.hrv',
   fatMass: 'health.fatMass',
   fatFreeMass: 'health.fatFreeMass',
@@ -44,6 +51,12 @@ const HEALTH_UNITS = {
   diastolic: 'mmHg',
   spo2: '%',
   restingHeartRate: 'bpm',
+  sleepHrMin: 'bpm',
+  sleepHrMax: 'bpm',
+  sleepDeep: 'min',
+  sleepLight: 'min',
+  sleepRem: 'min',
+  sleepWakeups: '×',
   hrv: 'ms',
   fatMass: 'kg',
   fatFreeMass: 'kg',
@@ -264,8 +277,8 @@ function showDetail(date) {
   document.getElementById('modal').classList.add('show');
 }
 
-// Keys stored on hd that have dedicated rendering — skip in generic device data loop.
-const HD_SKIP_KEYS = new Set(['hrWindow', 'hrIntradayCount']);
+// Keys stored on hd that have dedicated rendering or are internal — skip in generic device data loop.
+const HD_SKIP_KEYS = new Set(['hrWindow', 'hrIntradayCount', 'sleepStart', 'sleepEnd', 'sleepHrSamples']);
 
 function normalize24h(val) {
   if (!val || typeof val !== 'string') return val;

@@ -6,7 +6,7 @@ import { toast } from './ui.js';
 import { saveHealthData, saveEntries, saveToGist, saveHrBaseline } from './storage.js';
 import { getConfig } from './config.js';
 import { METRICS } from './drug-profiles.js';
-import { analyzeDay, buildBaseline } from './heart-rate.js';
+import { analyzeDay, buildBaseline, processHeartRateData } from './heart-rate.js';
 
 /**
  * Backfill existing entries with device data by date match.
@@ -504,7 +504,7 @@ export async function fetchWithingsData(startDate, endDate) {
         'Authorization': 'Bearer ' + token,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: `action=getsummary&startdateymd=${startDate}&enddateymd=${endDate}`,
+      body: `action=getsummary&startdateymd=${startDate}&enddateymd=${endDate}&data_fields=hr_average,hr_min,hr_max,sleep_score,total_sleep_time,deepsleepduration,lightsleepduration,remsleepduration,wakeupcount,breathing_disturbances_intensity`,
     });
     const sleepData = await sleepRes.json();
     console.log('[Withings] getsummary status:', sleepData.status, 'nights:', sleepData.body?.series?.length ?? 0);
@@ -515,10 +515,20 @@ export async function fetchWithingsData(startDate, endDate) {
       for (const s of sleepData.body.series) {
         const date = s.date;
         if (!state.healthData[date]) state.healthData[date] = {};
+        // Store sleep window timestamps for intraday HR analysis
+        if (s.startdate) state.healthData[date].sleepStart = s.startdate;
+        if (s.enddate)   state.healthData[date].sleepEnd   = s.enddate;
         if (s.data) {
           if (s.data.total_sleep_time) state.healthData[date].sleepHours = Math.round(s.data.total_sleep_time / 3600 * 10) / 10;
-          if (s.data.sleep_score) state.healthData[date].sleepScore = s.data.sleep_score;
-          if (s.data.hr_average) state.healthData[date].sleepHrAvg = Math.round(s.data.hr_average);
+          if (s.data.sleep_score)      state.healthData[date].sleepScore = s.data.sleep_score;
+          if (s.data.hr_average)       state.healthData[date].sleepHrAvg = Math.round(s.data.hr_average);
+          if (s.data.hr_min)           state.healthData[date].sleepHrMin = Math.round(s.data.hr_min);
+          if (s.data.hr_max)           state.healthData[date].sleepHrMax = Math.round(s.data.hr_max);
+          if (s.data.deepsleepduration)  state.healthData[date].sleepDeep  = Math.round(s.data.deepsleepduration / 60);
+          if (s.data.lightsleepduration) state.healthData[date].sleepLight = Math.round(s.data.lightsleepduration / 60);
+          if (s.data.remsleepduration)   state.healthData[date].sleepRem   = Math.round(s.data.remsleepduration / 60);
+          if (s.data.wakeupcount != null) state.healthData[date].sleepWakeups = s.data.wakeupcount;
+          if (s.data.breathing_disturbances_intensity != null) state.healthData[date].sleepBreathing = s.data.breathing_disturbances_intensity;
           imported++;
         }
       }
@@ -597,6 +607,27 @@ async function fetchIntradayDay(token, dateStr) {
   return readings;
 }
 
+/**
+ * Use cleaned intraday HR readings + stored sleep window to compute
+ * sleepHrAvg/Min/Max from actual cleaned data. Overwrites Withings-provided
+ * values (which come from raw optical data; ours are cleaned).
+ * sleepStart/sleepEnd are epoch seconds from getsummary.
+ */
+function computeSleepHrFromReadings(cleanedReadings, date) {
+  const hd = state.healthData[date];
+  if (!hd?.sleepStart || !hd?.sleepEnd || !cleanedReadings.length) return;
+  const start = hd.sleepStart * 1000;
+  const end   = hd.sleepEnd   * 1000;
+  const sleep = cleanedReadings.filter(r => r.timestamp >= start && r.timestamp <= end);
+  if (sleep.length < 3) return;
+  const bpms = sleep.map(r => r.bpm);
+  const avg = bpms.reduce((s, v) => s + v, 0) / bpms.length;
+  hd.sleepHrAvg = Math.round(avg);
+  hd.sleepHrMin = Math.min(...bpms);
+  hd.sleepHrMax = Math.max(...bpms);
+  hd.sleepHrSamples = sleep.length;
+}
+
 function doseTimeFor(date) {
   const drugId = state.settings.activeDrug?.id;
   const entry = state.entries.find(e => e.date === date && (!drugId || e.drugId === drugId));
@@ -655,11 +686,16 @@ export async function fetchWithingsIntraday(startDate, endDate, onProgress) {
       report({ current: i + 1, date, phase: 'processing' });
 
       if (!readings.length) continue;
+
+      // Clean readings and derive sleep HR for every day regardless of cutoff.
+      const { cleaned } = processHeartRateData(readings);
+      computeSleepHrFromReadings(cleaned, date);
+
       const isPreCutoff = cutoff && new Date(date + 'T12:00:00') < cutoff;
       if (isPreCutoff) {
-        baselineReadings.push(...readings);
+        baselineReadings.push(...cleaned);
       } else {
-        perDay[date] = readings;
+        perDay[date] = cleaned;
       }
     }
 
@@ -682,8 +718,8 @@ export async function fetchWithingsIntraday(startDate, endDate, onProgress) {
       const date = dateKeys[i];
       report({ current: i + 1, total: dateKeys.length, date, phase: 'analysis' });
 
-      const readings = perDay[date];
-      const summary = analyzeDay(readings, baseline, {
+      const cleaned = perDay[date];
+      const summary = analyzeDay(cleaned, baseline, {
         doseTime: doseTimeFor(date),
         onsetThreshold: hrCfg.onsetThreshold,
         sustainMinutes: hrCfg.sustainMinutes,
